@@ -11,4 +11,6 @@
     <string name="no_account">No account yet? Create one</string>
     <string name="title_activity_login">LoginActivity</string>
     <string name="title_activity_signup">SignupActivity</string>
+    <string name="firebase">firebase</string>
+
 </resources>

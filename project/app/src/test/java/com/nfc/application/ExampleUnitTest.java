@@ -1,4 +1,4 @@
-package com.example.myapplication;
+package com.nfc.application;
 
 import org.junit.Test;
 

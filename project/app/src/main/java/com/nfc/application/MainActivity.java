@@ -1,4 +1,4 @@
-package com.example.myapplication;
+package com.nfc.application;
 
 import android.os.Bundle;
 
@@ -7,6 +7,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.content.Intent;
+
+
 
 public class MainActivity extends AppCompatActivity {
 

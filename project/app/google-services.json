@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "352921551503",
+    "firebase_url": "https://nfc-app-ff89c.firebaseio.com",
+    "project_id": "nfc-app-ff89c",
+    "storage_bucket": "nfc-app-ff89c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:352921551503:android:7a2a4b9e04394e965166fa",
+        "android_client_info": {
+          "package_name": "com.nfc.application"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "352921551503-r1djkmb7m03vsedsm9upnpoi48p1hc7o.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC_RJ3NluV4nNicSnv_4ZFRDm1oeceEWV0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "352921551503-r1djkmb7m03vsedsm9upnpoi48p1hc7o.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,4 +1,4 @@
-package com.example.myapplication;
+package com.nfc.application;
 
 import android.app.ProgressDialog;
 import android.os.Bundle;
@@ -11,6 +11,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
+
+
 
 public class LoginActivity extends AppCompatActivity {
     private static final String TAG = "LoginActivity";
@@ -46,7 +48,6 @@ public class LoginActivity extends AppCompatActivity {
                 // Start the Signup activity
                 Intent intent = new Intent(getApplicationContext(), SignupActivity.class);
                 startActivityForResult(intent, REQUEST_SIGNUP);
-
                 overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
             }
         });

@@ -1,4 +1,4 @@
-package com.example.myapplication;
+package com.nfc.application;
 
 import android.app.ProgressDialog;
 import android.os.Bundle;
@@ -9,7 +9,13 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
 
 
 public class SignupActivity extends AppCompatActivity {
@@ -18,6 +24,7 @@ public class SignupActivity extends AppCompatActivity {
 
     private EditText _nameText,_emailText,_passwordText;
     private Button _signupButton;
+    private FirebaseAuth mAth;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -25,6 +32,8 @@ public class SignupActivity extends AppCompatActivity {
 
 
         setContentView(R.layout.activity_signup);
+        mAth = FirebaseAuth.getInstance();
+
         _nameText = findViewById(R.id.input_name);
         _emailText = findViewById(R.id.input_email);
         _passwordText = findViewById(R.id.input_password);
@@ -58,28 +67,37 @@ public class SignupActivity extends AppCompatActivity {
 
         _signupButton.setEnabled(false);
 
-        final ProgressDialog progressDialog = new ProgressDialog(SignupActivity.this,
-                R.style.AppTheme_Dark_Dialog);
-        progressDialog.setIndeterminate(true);
-        progressDialog.setMessage("Creating Account...");
-        progressDialog.show();
+//        final ProgressDialog progressDialog = new ProgressDialog(SignupActivity.this,
+//                R.style.AppTheme_Dark_Dialog);
+//        progressDialog.setIndeterminate(true);
+//        progressDialog.setMessage("Creating Account...");
+//        progressDialog.show();
 
         String name = _nameText.getText().toString();
         String email = _emailText.getText().toString();
         String password = _passwordText.getText().toString();
 
         // TODO: Implement your own signup logic here.
+        mAth.createUserWithEmailAndPassword(email,password)
+                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if(task.isSuccessful())
+                        {
+                            Toast.makeText(SignupActivity.this,"Account Created Successfully...",Toast.LENGTH_SHORT).show();
+                            onSignupSuccess();
+                        }
+                        else
+                        {
+                            String message = task.getException().toString();
+                            Toast.makeText(SignupActivity.this,"Error :" + message,Toast.LENGTH_SHORT).show();
+                            onSignupFailed();
 
-        new android.os.Handler().postDelayed(
-                new Runnable() {
-                    public void run() {
-                        // On complete call either onSignupSuccess or onSignupFailed
-                        // depending on success
-                        onSignupSuccess();
-                        // onSignupFailed();
-                        progressDialog.dismiss();
+                        }
                     }
-                }, 3000);
+                });
+
+
     }
 
 
