@@ -4,5 +4,11 @@
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#D81B60</color>
     <color name="secondary">#00BFA5</color>
+    <color name="theme_black">#222831</color>
+    <color name="theme_grey">#393e46</color>
+    <color name="theme_blue">#00adb5</color>
+    <color name="theme_white">#eeeeee</color>
+
+
 
 </resources>

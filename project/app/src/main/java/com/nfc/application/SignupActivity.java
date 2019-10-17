@@ -1,6 +1,7 @@
 package com.nfc.application;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -108,7 +109,7 @@ public class SignupActivity extends BaseActivity {
     }
 
     public void onSignupFailed() {
-        Toast.makeText(getBaseContext(), "Login failed", Toast.LENGTH_LONG).show();
+        Toast.makeText(getBaseContext(), "Sign up failed,please check your information", Toast.LENGTH_LONG).show();
 
         _signupButton.setEnabled(true);
     }

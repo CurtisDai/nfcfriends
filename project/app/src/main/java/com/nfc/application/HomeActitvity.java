@@ -47,10 +47,6 @@ public class HomeActitvity extends BaseActivity {
                 startActivity(intent);
             }
         });
-
-
-
-
     }
 
 

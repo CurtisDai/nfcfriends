@@ -48,7 +48,6 @@ public class InformationActivity extends BaseActivity {
                 } else {
                     Log.d("getFriends", "get failed with ", task.getException());
                 }
-
             }
         });
     }

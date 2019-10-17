@@ -30,8 +30,6 @@ import static java.security.AccessController.getContext;
 
 public class LoginActivity extends BaseActivity {
     private static final String TAG = "LoginActivity";
-    private static final int REQUEST_SIGNUP = 0;
-
     private EditText _emailText,_passwordText;
     private Button _loginButton;
     private FirebaseAuth mAth;
@@ -59,8 +57,6 @@ public class LoginActivity extends BaseActivity {
         }
 
 
-
-
         setContentView(R.layout.card_login);
 
         mAth = FirebaseAuth.getInstance();
@@ -76,14 +72,13 @@ public class LoginActivity extends BaseActivity {
             }
         });
 
-
         _signupLink.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
                 // Start the Signup activity
-                Intent intent = new Intent(getApplicationContext(), SignupActivity.class);
-                startActivityForResult(intent, REQUEST_SIGNUP);
+                Intent intent = new Intent(LoginActivity.this, SignupActivity.class);
+                startActivity(intent);
                 overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
             }
         });
@@ -132,23 +127,6 @@ public class LoginActivity extends BaseActivity {
 
     }
 
-
-
-    public void resetSprfMain(){
-        editorMain.putBoolean("main",false);
-    }
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode,resultCode,data);
-        if (requestCode == REQUEST_SIGNUP) {
-            if (resultCode == RESULT_OK) {
-
-                // TODO: Implement successful signup logic here
-                // By default we just finish the Activity and log them in automatically
-                this.finish();
-            }
-        }
-    }
 
 //    @Override
 //    public void onBackPressed() {
