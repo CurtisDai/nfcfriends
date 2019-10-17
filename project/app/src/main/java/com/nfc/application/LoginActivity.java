@@ -1,7 +1,11 @@
 package com.nfc.application;
 
 import android.app.ProgressDialog;
+import android.content.ComponentName;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.UserManager;
+import androidx.preference.PreferenceManager;
 import android.util.Log;
 
 import android.content.Intent;
@@ -19,6 +23,8 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
+import static java.security.AccessController.getContext;
+
 
 public class LoginActivity extends AppCompatActivity {
     private static final String TAG = "LoginActivity";
@@ -28,10 +34,26 @@ public class LoginActivity extends AppCompatActivity {
     private Button _loginButton;
     private FirebaseAuth mAth;
 
+    SharedPreferences sprfMain;
+    SharedPreferences.Editor editorMain;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        //if login before, do not need log again
+        sprfMain = PreferenceManager.getDefaultSharedPreferences(this);
+        editorMain = sprfMain.edit();
+        if (sprfMain.getBoolean("main", false)) {
+            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+            startActivity(intent);
+            LoginActivity.this.finish();
+        }
+
+
+
+
         setContentView(R.layout.card_login);
         mAth = FirebaseAuth.getInstance();
 
@@ -88,7 +110,12 @@ public class LoginActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()){
-                            Toast.makeText(LoginActivity.this,"success!",Toast.LENGTH_SHORT).show();
+                            _loginButton.setEnabled(true);
+                            editorMain.putBoolean("main", true);
+                            editorMain.commit();
+                            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                            startActivity(intent);
+                            LoginActivity.this.finish();
                         }
                         else{
                             onLoginFailed();
@@ -97,16 +124,6 @@ public class LoginActivity extends AppCompatActivity {
                     }
                 });
 
-
-//        new android.os.Handler().postDelayed(
-//                new Runnable() {
-//                    public void run() {
-//                        // On complete call either onLoginSuccess or onLoginFailed
-//                        onLoginSuccess();
-//                        // onLoginFailed();
-//                        progressDialog.dismiss();
-//                    }
-//                }, 3000);
     }
 
 
@@ -129,15 +146,11 @@ public class LoginActivity extends AppCompatActivity {
 //        moveTaskToBack(true);
 //    }
 
-    public void onLoginSuccess() {
-        _loginButton.setEnabled(true);
-        finish();
-    }
 
     public void onLoginFailed() {
         Toast.makeText(this, "Login failed", Toast.LENGTH_LONG).show();
-
         _loginButton.setEnabled(true);
+
     }
 
     // determine whether the information is validate

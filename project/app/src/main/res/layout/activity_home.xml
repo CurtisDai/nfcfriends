@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        style="@style/layout"
+        tools:context=".presentation.home.HomeActivity">
+
+        <!--<com.google.android.material.appbar.AppBarLayout-->
+            <!--style="@style/app_bar">-->
+            <!--<io.bloco.cardcase.presentation.common.Toolbar-->
+                <!--android:id="@+id/toolbar"-->
+                <!--style="@style/toolbar"/>-->
+            <!--<include layout="@layout/toolbar_search" android:visibility="gone"/>-->
+        <!--</com.google.android.material.appbar.AppBarLayout>-->
+
+        <LinearLayout
+            android:id="@+id/home_empty"
+            style="@style/layout_inner"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:visibility="gone"
+            tools:visibility="visible"
+            tools:ignore="UseCompoundDrawables">
+
+            <ImageView
+                android:contentDescription="@null"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/cards"
+                android:layout_marginBottom="@dimen/margin_default"/>
+
+            <TextView
+                style="@style/text_block"
+                android:layout_margin="@dimen/margin_default"
+                android:text="@string/home_empty_text"
+                android:textSize="@dimen/text_title"
+                android:paddingBottom="@dimen/margin_triple"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/home_search_empty"
+            style="@style/layout_inner"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:visibility="gone">
+
+            <TextView
+                style="@style/text_block"
+                android:layout_margin="@dimen/margin_default"
+                android:text="@string/home_search_empty_text"/>
+
+        </LinearLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            style="@style/layout_inner"
+            android:id="@+id/home_cards"
+            android:layout_marginBottom="@dimen/nav_bar_subtraction"
+            android:visibility="gone"
+            android:paddingBottom="88dp"
+            android:clipToPadding="false"
+            tools:visibility="visible"/>
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/home_exchange"
+            style="@style/fab"
+            android:scaleType="center"
+            android:src="@drawable/ic_exchange"/>
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+    <View
+        android:id="@+id/home_transition_overlay"
+        android:layout_width="114dp"
+        android:layout_height="158dp"
+        android:background="@color/secondary"
+        android:visibility="gone" />
+
+</merge>
