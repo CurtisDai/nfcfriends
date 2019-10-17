@@ -12,7 +12,7 @@ import android.widget.Button;
 
 public class HomeActitvity extends BaseActivity {
     Button logout;
-
+    Button information;
     SharedPreferences preferences;
 
 
@@ -37,6 +37,20 @@ public class HomeActitvity extends BaseActivity {
                 HomeActitvity.this.finish();
             }
         });
+
+        information = findViewById(R.id.btn_information);
+        information.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //点击注销按键后调用LoginActivity提供的resetSprfMain()方法执行editorMain.putBoolean("main",false);，即将"main"对应的值修改为false
+                Intent intent=new Intent(HomeActitvity.this,InformationActivity.class);
+                startActivity(intent);
+            }
+        });
+
+
+
+
     }
 
 
