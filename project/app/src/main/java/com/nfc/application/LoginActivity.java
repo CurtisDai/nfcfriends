@@ -53,7 +53,7 @@ public class LoginActivity extends BaseActivity {
         sprfMain = PreferenceManager.getDefaultSharedPreferences(this);
         ActivityCollector.addActivity(LoginActivity.this, getClass());
         if (sprfMain.getBoolean("main", false)) {
-            Intent intent = new Intent(LoginActivity.this, HomeActitvity.class);
+            Intent intent = new Intent(LoginActivity.this, HomePageActivity.class);
             startActivity(intent);
             LoginActivity.this.finish();
         }
@@ -120,13 +120,12 @@ public class LoginActivity extends BaseActivity {
                             editorMain = sprfMain.edit();
                             editorMain.putBoolean("main", true);
                             editorMain.apply();
-                            Intent intent = new Intent(LoginActivity.this, HomeActitvity.class);
+                            Intent intent = new Intent(LoginActivity.this, HomePageActivity.class);
                             startActivity(intent);
                         }
                         else{
                             onLoginFailed();
                         }
-
                     }
                 });
 

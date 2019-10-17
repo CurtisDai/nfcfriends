@@ -13,5 +13,6 @@
     <string name="title_activity_login">LoginActivity</string>
     <string name="title_activity_signup">SignupActivity</string>
     <string name="firebase">firebase</string>
+    <string name="title_activity_organization_map">Map</string>
 
 </resources>
