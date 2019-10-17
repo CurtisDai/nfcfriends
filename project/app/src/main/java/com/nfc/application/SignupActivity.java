@@ -18,7 +18,7 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
 
-public class SignupActivity extends AppCompatActivity {
+public class SignupActivity extends BaseActivity {
     private static final String TAG = "SignupActivity";
 
 

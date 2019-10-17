@@ -10,7 +10,7 @@ import android.view.animation.AnimationSet;
 import android.widget.RelativeLayout;
 
 
-public class WelcomeActivity extends AppCompatActivity {
+public class WelcomeActivity extends BaseActivity {
     private RelativeLayout activity_launcher;
     private AnimationSet animationSet;
     private boolean hasStart;

@@ -1,7 +1,9 @@
 package com.nfc.application;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.UserManager;
@@ -26,7 +28,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import static java.security.AccessController.getContext;
 
 
-public class LoginActivity extends AppCompatActivity {
+public class LoginActivity extends BaseActivity {
     private static final String TAG = "LoginActivity";
     private static final int REQUEST_SIGNUP = 0;
 
@@ -35,7 +37,11 @@ public class LoginActivity extends AppCompatActivity {
     private FirebaseAuth mAth;
 
     SharedPreferences sprfMain;
+
     SharedPreferences.Editor editorMain;
+
+
+
 
 
     @Override
@@ -43,10 +49,11 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         //if login before, do not need log again
+
         sprfMain = PreferenceManager.getDefaultSharedPreferences(this);
-        editorMain = sprfMain.edit();
+        ActivityCollector.addActivity(LoginActivity.this, getClass());
         if (sprfMain.getBoolean("main", false)) {
-            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+            Intent intent = new Intent(LoginActivity.this, HomeActitvity.class);
             startActivity(intent);
             LoginActivity.this.finish();
         }
@@ -55,13 +62,12 @@ public class LoginActivity extends AppCompatActivity {
 
 
         setContentView(R.layout.card_login);
-        mAth = FirebaseAuth.getInstance();
 
+        mAth = FirebaseAuth.getInstance();
         _emailText = findViewById(R.id.username);
         _passwordText = findViewById(R.id.password);
         _loginButton = findViewById(R.id.btn_login);
         TextView _signupLink = findViewById(R.id.link_signup);
-
         _loginButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -111,11 +117,11 @@ public class LoginActivity extends AppCompatActivity {
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()){
                             _loginButton.setEnabled(true);
+                            editorMain = sprfMain.edit();
                             editorMain.putBoolean("main", true);
-                            editorMain.commit();
-                            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                            editorMain.apply();
+                            Intent intent = new Intent(LoginActivity.this, HomeActitvity.class);
                             startActivity(intent);
-                            LoginActivity.this.finish();
                         }
                         else{
                             onLoginFailed();
@@ -127,6 +133,10 @@ public class LoginActivity extends AppCompatActivity {
     }
 
 
+
+    public void resetSprfMain(){
+        editorMain.putBoolean("main",false);
+    }
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode,resultCode,data);
