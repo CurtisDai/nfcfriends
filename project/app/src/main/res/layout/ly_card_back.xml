@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/item_back_ly"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="275dp"
+        android:orientation="vertical">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/icon_image"
+            android:layout_width = "100dp"
+            android:layout_height="100dp"
+            android:src="@drawable/pic4"
+            android:layout_centerInParent = "true"/>
+
+    </RelativeLayout>
+
+
+    <ImageView
+        android:id="@+id/person"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:src="@drawable/profile"
+        android:layout_marginTop="250dp"
+        android:layout_marginLeft="40dp"/>
+
+    <TextView
+        android:layout_width="300dp"
+        android:layout_height="40dp"
+        android:layout_marginLeft="100dp"
+        android:layout_marginTop="250dp"
+        android:text = "Hason"
+        android:textStyle="bold"
+        android:gravity="center_vertical">
+
+    </TextView>
+
+    <ImageView
+        android:id="@+id/call"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="325dp"
+        android:layout_marginLeft="40dp"
+        android:src="@drawable/call" />
+
+
+    <TextView
+        android:layout_width="300dp"
+        android:layout_height="40dp"
+        android:layout_marginLeft="100dp"
+        android:layout_marginTop="325dp"
+        android:text = "0420874568"
+        android:textStyle="bold"
+        android:gravity="center_vertical"/>
+
+
+    <ImageView
+        android:id="@+id/orgnization"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="400dp"
+        android:layout_marginLeft="40dp"
+        android:src="@drawable/group" />
+
+    <TextView
+        android:layout_width="300dp"
+        android:layout_height="40dp"
+        android:layout_marginLeft="100dp"
+        android:layout_marginTop="400dp"
+        android:text = "Melbourne University"
+        android:gravity="center_vertical"
+        android:textStyle="bold">
+
+    </TextView>
+
+    <ImageView
+        android:id="@+id/location"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="475dp"
+        android:layout_marginLeft="40dp"
+        android:src="@drawable/location" />
+
+    <TextView
+        android:layout_width="300dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="475dp"
+        android:layout_marginLeft="100dp"
+        android:text="83 Flemington Road North Melbourne"
+        android:gravity="center_vertical"
+        android:textStyle="bold">
+    </TextView>
+
+    <ImageView
+        android:id="@+id/email"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginLeft="40dp"
+        android:layout_marginTop="550dp"
+        android:src="@drawable/email" />
+
+    <TextView
+        android:layout_width="300dp"
+        android:layout_height="40dp"
+        android:layout_marginLeft="100dp"
+        android:layout_marginTop="550dp"
+        android:text = "2804495816@qq.com"
+        android:gravity="center_vertical"
+        android:textStyle="bold">
+
+    </TextView>
+
+
+</RelativeLayout>

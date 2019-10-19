@@ -3,6 +3,8 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion 29
     buildToolsVersion "29.0.1"
+
+
     defaultConfig {
         applicationId "com.nfc.application"
         minSdkVersion 23
@@ -10,6 +12,9 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        renderscriptTargetApi = 19
+        renderscriptSupportModeEnabled = true
     }
     buildTypes {
         release {
@@ -24,12 +29,14 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
     implementation 'com.google.android.material:material:1.0.0'
+    implementation 'com.google.android.gms:play-services-maps:17.0.0'
     testImplementation 'junit:junit:4.12'
     implementation 'com.android.support:design:27.1.0'
     implementation 'com.android.support:appcompat-v7:26.0.0'
     implementation 'com.firebaseui:firebase-ui-auth:4.3.1'
     implementation 'com.google.firebase:firebase-auth:19.1.0'
     implementation 'com.google.android.gms:play-services-auth:17.0.0'
+
     implementation 'com.google.firebase:firebase-core:17.2.0'
     implementation 'com.android.support:support-compat:25.1.1'
     implementation 'com.daimajia.easing:library:2.0@aar'
@@ -37,5 +44,13 @@ dependencies {
     implementation "androidx.preference:preference:1.1.0"
     implementation 'com.google.firebase:firebase-firestore:21.1.1'
 
+
+    implementation 'com.android.support:recyclerview-v7:29.2.1'
+    implementation 'de.hdodenhof:circleimageview:2.1.0'
+    implementation 'androidx.appcompat:appcompat:1.0.2'
+    implementation 'org.greenrobot:eventbus:3.0.0'
+    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
 }
+apply plugin: 'com.google.gms.google-services'
 apply plugin: 'com.google.gms.google-services'

@@ -22,6 +22,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
@@ -33,13 +34,8 @@ public class LoginActivity extends BaseActivity {
     private EditText _emailText,_passwordText;
     private Button _loginButton;
     private FirebaseAuth mAth;
-
     SharedPreferences sprfMain;
-
     SharedPreferences.Editor editorMain;
-
-
-
 
 
     @Override
@@ -47,18 +43,20 @@ public class LoginActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
 
         //if login before, do not need log again
-
         sprfMain = PreferenceManager.getDefaultSharedPreferences(this);
         ActivityCollector.addActivity(LoginActivity.this, getClass());
         if (sprfMain.getBoolean("main", false)) {
-            Intent intent = new Intent(LoginActivity.this, HomeActitvity.class);
+            Intent intent = new Intent(LoginActivity.this, HomePageActivity.class);
             startActivity(intent);
             LoginActivity.this.finish();
         }
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 410ec552b5d0467be778ca4b82d0577c5266d98b
         setContentView(R.layout.card_login);
-
+        FirebaseApp.initializeApp(this);
         mAth = FirebaseAuth.getInstance();
         _emailText = findViewById(R.id.username);
         _passwordText = findViewById(R.id.password);
@@ -115,13 +113,12 @@ public class LoginActivity extends BaseActivity {
                             editorMain = sprfMain.edit();
                             editorMain.putBoolean("main", true);
                             editorMain.apply();
-                            Intent intent = new Intent(LoginActivity.this, HomeActitvity.class);
+                            Intent intent = new Intent(LoginActivity.this, HomePageActivity.class);
                             startActivity(intent);
                         }
                         else{
                             onLoginFailed();
                         }
-
                     }
                 });
 

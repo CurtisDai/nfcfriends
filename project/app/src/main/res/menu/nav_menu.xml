@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/profile"
+            android:icon="@drawable/profile"
+            android:title="Profile" />
+        <item
+            android:id="@+id/call"
+            android:icon="@drawable/call"
+            android:title="Call" />
+        <item
+            android:id="@+id/job"
+            android:icon="@drawable/job"
+            android:title="Job"/>
+        <item
+            android:id="@+id/organization"
+            android:icon="@drawable/group"
+            android:title="Organization"/>
+        <item
+            android:id="@+id/email"
+            android:icon="@drawable/email"
+            android:title="Email"/>
+    </group>
+</menu>
