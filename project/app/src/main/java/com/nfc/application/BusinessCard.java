@@ -7,8 +7,8 @@ public class BusinessCard {
     private String address;
     private String telephone;
     private String email;
-    int position;
-    boolean isFront;
+    private int position;
+    private boolean isFront;
 
     public BusinessCard( ){
 

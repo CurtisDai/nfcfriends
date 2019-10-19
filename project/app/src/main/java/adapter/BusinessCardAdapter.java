@@ -1,12 +1,17 @@
 package adapter;
 
 import android.animation.AnimatorSet;
+import android.annotation.SuppressLint;
 import android.content.Context;
+import android.media.Image;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import com.nfc.application.BusinessCard;
 import com.nfc.application.FlipAnimator;
@@ -14,18 +19,21 @@ import com.nfc.application.R;
 
 import java.util.List;
 
+
+import androidx.annotation.Nullable;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
+import library.CardAdapterHelper;
 
 public class BusinessCardAdapter extends RecyclerView.Adapter<BusinessCardAdapter.ViewHolder>{
     private List<BusinessCard> mBusinessCardList;
-
+    private CardAdapterHelper mCardAdapterHelper = new CardAdapterHelper();
     private Context context;
-    LinearLayout[] card_back_arr, card_front_arr;
+    LinearLayout[] card_front_arr;
+    RelativeLayout[] card_back_arr;
 
     private AnimatorSet mRightOutAnimatorSet;
     private AnimatorSet mLeftInAnimatorSet;
-
-    public static boolean isFront = false;  //是否显示背面
 
     //AnimatorSet  mRightOutSet;
     //Animator mLeftInSet;
@@ -34,19 +42,20 @@ public class BusinessCardAdapter extends RecyclerView.Adapter<BusinessCardAdapte
         mBusinessCardList = BusinessCardList;
         this.mBusinessCardList = BusinessCardList;
         this.context = context;
-        card_back_arr = new LinearLayout[BusinessCardList.size()];
+        card_back_arr = new RelativeLayout[BusinessCardList.size()];
         card_front_arr = new LinearLayout[BusinessCardList.size()];
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder{
         View businessCardView;
-        LinearLayout card_back, card_front;
+        LinearLayout card_front;
+        RelativeLayout card_back;
 
         public ViewHolder(View cardView){
             super(cardView);
             businessCardView = cardView;
-            card_front = (LinearLayout) itemView.findViewById(R.id.item_front_ly);
-            card_back = (LinearLayout) itemView.findViewById(R.id.item_back_ly);
+            card_front = itemView.findViewById(R.id.item_front_ly);
+            card_back = itemView.findViewById(R.id.item_back_ly);
         }
 
     }
@@ -55,23 +64,36 @@ public class BusinessCardAdapter extends RecyclerView.Adapter<BusinessCardAdapte
         View view_main = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.card_item, parent, false);
         final ViewHolder holder = new ViewHolder(view_main);
+        mCardAdapterHelper.onCreateViewHolder(parent, view_main);
         holder.businessCardView.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
                 int position = holder.getAdapterPosition();
-                if (isFront) {
-                    isFront = false;
-                    mBusinessCardList.get(position).setFront(false);
-                } else {
-                    isFront = true;
-                    mBusinessCardList.get(position).setFront(true);
-                }
+                Boolean front = mBusinessCardList.get(position).isFront();
                 Log.d("asd", String.valueOf(position));
                 FlipAnimator.flipView(context,
-                        card_back_arr[position],
                         card_front_arr[position],
-                        mBusinessCardList.get(position).isFront(),
-                        mBusinessCardList.get(position).getPosition());
+                        card_back_arr[position],
+                        front);
+                mBusinessCardList.get(position).setFront(!front);
+            }
+        });
+
+        ImageView location = (ImageView) holder.card_back.findViewById(R.id.location);
+        location.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //TO-DO show the map activity
+                Toast.makeText(context, "show map", Toast.LENGTH_LONG).show();
+            }
+        });
+
+        ImageView call = (ImageView)holder.card_back.findViewById(R.id.call);
+        call.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view) {
+                //TO-DO show call others
+                Toast.makeText(context, "show telephone", Toast.LENGTH_LONG).show();
             }
         });
         return holder;
@@ -79,6 +101,7 @@ public class BusinessCardAdapter extends RecyclerView.Adapter<BusinessCardAdapte
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position){
+        mCardAdapterHelper.onBindViewHolder(holder.itemView, position, getItemCount());
         card_back_arr[position] = holder.card_back;
         card_front_arr[position] = holder.card_front;
     }

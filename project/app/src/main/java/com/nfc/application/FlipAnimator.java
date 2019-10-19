@@ -11,55 +11,52 @@ import android.view.View;
 
 public class FlipAnimator {
     private static String TAG = FlipAnimator.class.getSimpleName();
-    private static AnimatorSet buttonIn, topOut, buttonOut, topIn;
+    private static AnimatorSet mRightOutSet, mLeftInSet;
+    private static final int distance  = 16000;
 
     /**
      * Performs flip animation on two views
      */
     @SuppressLint("ResourceType")
-    public static void flipView(final Context context, final View back, final View front, final boolean showFront, final int position) {
-        //buttonIn = (AnimatorSet) AnimatorInflater.loadAnimator(context, R.animator.card_flip_button_in);
-        topOut = (AnimatorSet) AnimatorInflater.loadAnimator(context, R.anim.card_flip_anim_out);
-        //buttonOut = (AnimatorSet) AnimatorInflater.loadAnimator(context, R.animator.card_flip_button_out);
-        topIn = (AnimatorSet) AnimatorInflater.loadAnimator(context, R.anim.card_flip_anim_in);
+    public static void flipView(final Context context, final View front, final View back, final boolean showFront) {
+
+        mRightOutSet = (AnimatorSet) AnimatorInflater.loadAnimator(context, R.anim.card_flip_anim_out);
+        mLeftInSet = (AnimatorSet) AnimatorInflater.loadAnimator(context, R.anim.card_flip_anim_in);
+
+        float scale = context.getResources().getDisplayMetrics().density * distance;
+        front.setCameraDistance(scale);
+        back.setCameraDistance(scale);
 
         final AnimatorSet showFrontAnim = new AnimatorSet();
         final AnimatorSet showBackAnim = new AnimatorSet();
 
-        //buttonIn.setTarget(back);
-        topOut.setTarget(front);
-        showFrontAnim.playTogether(/*buttonIn,*/topOut);
+
         showFrontAnim.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator animation) {
                 super.onAnimationEnd(animation);
-                //setEventData(position, showFront);
-                //Toast.makeText(context, "Animation end", Toast.LENGTH_SHORT).show();
             }
         });
-        //buttonOut.setTarget(back);
-        topIn.setTarget(front);
-        showBackAnim.playTogether(topIn/*buttonOut*/);
+
         showBackAnim.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator animation) {
                 super.onAnimationEnd(animation);
-                //setEventData(position, showFront);
             }
         });
         if (showFront) {
+            mRightOutSet.setTarget(front);
+            mLeftInSet.setTarget(back);
+            showFrontAnim.playTogether(mLeftInSet, mRightOutSet);
             showFrontAnim.start();
         } else {
+            mRightOutSet.setTarget(back);
+            mLeftInSet.setTarget(front);
+            showBackAnim.playTogether(mLeftInSet, mRightOutSet);
             showBackAnim.start();
         }
     }
 
-    /*private static void setEventData(int position, boolean showFront) {
-        EventData data = new EventData();
-        int count = position + 1;
-        BusinessCardAdapter.isFront = showFront;
-        data.setFront(showFront);
-        data.setPosition(count);
-        EventBus.getDefault().post(data);
-    }*/
+
+
 }

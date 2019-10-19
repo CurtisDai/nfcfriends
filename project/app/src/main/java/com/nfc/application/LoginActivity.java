@@ -22,6 +22,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
@@ -35,13 +36,8 @@ public class LoginActivity extends BaseActivity {
     private EditText _emailText,_passwordText;
     private Button _loginButton;
     private FirebaseAuth mAth;
-
     SharedPreferences sprfMain;
-
     SharedPreferences.Editor editorMain;
-
-
-
 
 
     @Override
@@ -49,7 +45,6 @@ public class LoginActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
 
         //if login before, do not need log again
-
         sprfMain = PreferenceManager.getDefaultSharedPreferences(this);
         ActivityCollector.addActivity(LoginActivity.this, getClass());
         if (sprfMain.getBoolean("main", false)) {
@@ -58,11 +53,8 @@ public class LoginActivity extends BaseActivity {
             LoginActivity.this.finish();
         }
 
-
-
-
         setContentView(R.layout.card_login);
-
+        FirebaseApp.initializeApp(this);
         mAth = FirebaseAuth.getInstance();
         _emailText = findViewById(R.id.username);
         _passwordText = findViewById(R.id.password);
