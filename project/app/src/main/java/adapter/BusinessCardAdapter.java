@@ -3,6 +3,8 @@ package adapter;
 import android.animation.AnimatorSet;
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
+
 import android.media.Image;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -18,6 +20,8 @@ import com.nfc.application.FlipAnimator;
 import com.nfc.application.R;
 
 import java.util.List;
+import android.net.Uri;
+
 
 
 import androidx.annotation.Nullable;
@@ -85,6 +89,11 @@ public class BusinessCardAdapter extends RecyclerView.Adapter<BusinessCardAdapte
             public void onClick(View view) {
                 //TO-DO show the map activity
                 Toast.makeText(context, "show map", Toast.LENGTH_LONG).show();
+
+                String address = "university of melbourne";
+                Intent intent = new Intent(context,com.nfc.application.MapsActivity.class);
+                intent.putExtra("address",address);
+                context.startActivity(intent);
             }
         });
 
@@ -94,6 +103,13 @@ public class BusinessCardAdapter extends RecyclerView.Adapter<BusinessCardAdapte
             public void onClick(View view) {
                 //TO-DO show call others
                 Toast.makeText(context, "show telephone", Toast.LENGTH_LONG).show();
+                String number  ="12345";
+                Intent intent = new Intent(Intent.ACTION_DIAL);
+                intent.setData(Uri.parse("tel:"+number));
+
+                context.startActivity(intent);
+
+
             }
         });
         return holder;
