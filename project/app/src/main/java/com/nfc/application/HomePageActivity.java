@@ -120,6 +120,11 @@ public class HomePageActivity extends AppCompatActivity {
                 //Todo
                 Toast.makeText(this, "to do", Toast.LENGTH_LONG).show();
                 break;
+            case R.id.Scan:
+                Intent scan = new Intent(HomePageActivity.this, CardScanActivity.class);
+                startActivity(scan);
+                break;
+
             default:
         }
         return true;

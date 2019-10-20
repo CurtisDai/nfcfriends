@@ -37,7 +37,8 @@
 //                HomeActitvity.this.finish();
 //            }
 //        });
-//
+
+
 //        information = findViewById(R.id.btn_information);
 //        information.setOnClickListener(new View.OnClickListener() {
 //            @Override

@@ -15,4 +15,9 @@
     <string name="firebase">firebase</string>
     <string name="title_activity_organization_map">Map</string>
 
+    <string name="text_goes_here">text goes here</string>
+    <string name="contacts">contacts</string>
+    <string name="phone">phone</string>
+
+    <string name="button_to_open_camera">button to open camera</string>
 </resources>

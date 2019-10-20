@@ -2,6 +2,7 @@ package com.nfc.application;
 
 import android.Manifest;
 import android.annotation.TargetApi;
+import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -99,9 +100,18 @@ public class BasicInfoActivity extends AppCompatActivity {
                 if(resultCode == RESULT_OK) {
                     Uri uri = data.getData();
                     Log.e("uri", uri.toString());
-
+                    //use content interface
+                    ContentResolver cr = this.getContentResolver();
+                    try{
+                        Bitmap bitmap = BitmapFactory.decodeStream(cr.openInputStream(uri));
+                        picture.setImageBitmap(bitmap);
+                    } catch (FileNotFoundException e){
+                        Log.e("Exception", e.getMessage(),e);
+                    }
+                }else{
+                    Log.i("MainActivtiy", "operation error");
                 }
-                break;
+                super.onActivityResult(requestCode, resultCode, data);
             default:
                 break;
         }

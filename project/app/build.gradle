@@ -6,6 +6,7 @@ android {
 
 
     defaultConfig {
+        buildConfigField "String", "ER_API_KEY", "\" 438c2f2e-6b9d-44bb-bd0c-36fe2af215b4\""
         applicationId "com.nfc.application"
         minSdkVersion 23
         targetSdkVersion 29
@@ -51,5 +52,7 @@ dependencies {
     implementation 'org.greenrobot:eventbus:3.0.0'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+
+    implementation 'com.googlecode.libphonenumber:libphonenumber:8.2.0'
 }
 apply plugin: 'com.google.gms.google-services'

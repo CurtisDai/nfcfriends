@@ -13,4 +13,11 @@
         android:icon = "@drawable/delete"
         app:showAsAction = "ifRoom"/>
 
+    <item
+        android:id="@+id/Scan"
+        android:title="Scan"
+        android:icon = "@drawable/camera"
+        app:showAsAction = "ifRoom"/>
+
+
 </menu>
