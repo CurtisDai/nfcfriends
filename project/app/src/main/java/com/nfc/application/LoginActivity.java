@@ -51,10 +51,6 @@ public class LoginActivity extends BaseActivity {
             LoginActivity.this.finish();
         }
 
-<<<<<<< HEAD
-
-=======
->>>>>>> 410ec552b5d0467be778ca4b82d0577c5266d98b
         setContentView(R.layout.card_login);
         FirebaseApp.initializeApp(this);
         mAth = FirebaseAuth.getInstance();

@@ -4,14 +4,11 @@
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#D81B60</color>
     <color name="secondary">#00BFA5</color>
-<<<<<<< HEAD
     <color name="theme_black">#222831</color>
     <color name="theme_grey">#393e46</color>
     <color name="theme_blue">#00adb5</color>
     <color name="theme_white">#eeeeee</color>
 
-
-=======
     <color name="primary">#F44336</color>
     <color name="primary_dark">#D32F2F</color>
     <color name="primary_light">#FFCDD2</color>
@@ -22,6 +19,6 @@
     <color name="text">#FFFFFF</color>
     <color name="white">#FFFFFF</color>
     <color name="tab_strip">#B42929</color>
->>>>>>> 410ec552b5d0467be778ca4b82d0577c5266d98b
+
 
 </resources>

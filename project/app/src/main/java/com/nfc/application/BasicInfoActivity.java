@@ -13,6 +13,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -95,12 +96,10 @@ public class BasicInfoActivity extends AppCompatActivity {
                 }
                 break;
             case CHOOSE_PHOTO:
-                if(requestCode == RESULT_OK) {
-                    if (Build.VERSION.SDK_INT >= 19) {
-                        handleImageOnKitKat(data);
-                    } else {
-                        handleImageBeforeKitKat(data);
-                    }
+                if(resultCode == RESULT_OK) {
+                    Uri uri = data.getData();
+                    Log.e("uri", uri.toString());
+
                 }
                 break;
             default:
@@ -108,8 +107,10 @@ public class BasicInfoActivity extends AppCompatActivity {
         }
     }
     private void openAlbum(){
+
         Intent intent = new Intent("android.intent.action.GET_CONTENT");
         intent.setType("image/*");
+
         startActivityForResult(intent, CHOOSE_PHOTO);
     }
 
@@ -172,6 +173,7 @@ public class BasicInfoActivity extends AppCompatActivity {
         if(imagePath != null){
             Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
             picture.setImageBitmap(bitmap);
+            Toast.makeText(this, "success to get image", Toast.LENGTH_SHORT).show();
         }else{
             Toast.makeText(this, "fail to get image", Toast.LENGTH_SHORT).show();
         }
