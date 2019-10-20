@@ -83,6 +83,24 @@ public class BusinessCardAdapter extends RecyclerView.Adapter<BusinessCardAdapte
             }
         });
 
+
+        ImageView email = (ImageView) holder.card_back.findViewById(R.id.email);
+
+        email.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //TO-DO show the map activity
+                Toast.makeText(context, "show email", Toast.LENGTH_LONG).show();
+
+                String address = "awesomeyeli@gmail.com";
+
+                Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:"+address));
+
+                context.startActivity(emailIntent);
+            }
+        });
+
+
         ImageView location = (ImageView) holder.card_back.findViewById(R.id.location);
         location.setOnClickListener(new View.OnClickListener() {
             @Override
