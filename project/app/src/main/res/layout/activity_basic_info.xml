@@ -7,7 +7,6 @@
     tools:context=".BasicInfoActivity"
     android:orientation="vertical">
 
-
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="275dp"
@@ -45,18 +44,14 @@
         android:layout_marginTop="300dp"
         android:layout_marginLeft="40dp"/>
 
-    <com.google.android.material.textfield.TextInputLayout
+    <EditText
         android:layout_width="300dp"
         android:layout_height="40dp"
         android:layout_marginLeft="100dp"
         android:layout_marginTop="300dp"
-        android:hint="@string/app_name"
-        style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.Dense">
+        android:hint="Name">
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-    </com.google.android.material.textfield.TextInputLayout>
+    </EditText>
 
     <ImageView
         android:id="@+id/call"
@@ -67,18 +62,14 @@
         android:src="@drawable/call" />
 
 
-    <com.google.android.material.textfield.TextInputLayout
+    <EditText
         android:layout_width="300dp"
         android:layout_height="40dp"
         android:layout_marginLeft="100dp"
         android:layout_marginTop="375dp"
-        android:hint="@string/app_name"
-        style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.Dense">
+        android:hint = "call">
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-    </com.google.android.material.textfield.TextInputLayout>
+    </EditText>
 
 
     <ImageView
@@ -89,76 +80,46 @@
         android:layout_marginLeft="40dp"
         android:src="@drawable/group" />
 
-    <com.google.android.material.textfield.TextInputLayout
+    <EditText
         android:layout_width="300dp"
         android:layout_height="40dp"
         android:layout_marginLeft="100dp"
         android:layout_marginTop="450dp"
-        android:hint="@string/app_name"
-        style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.Dense">
+        android:hint="organization">
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <ImageView
-        android:id="@+id/email"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_marginTop="525dp"
-        android:layout_marginLeft="40dp"
-        android:src="@drawable/email" />
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:layout_width="300dp"
-        android:layout_height="40dp"
-        android:layout_marginLeft="100dp"
-        android:layout_marginTop="525dp"
-        android:hint="@string/app_name"
-        style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.Dense">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-    </com.google.android.material.textfield.TextInputLayout>
+    </EditText>
 
     <ImageView
         android:id="@+id/location"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:layout_marginTop="600dp"
+        android:layout_marginTop="525dp"
         android:layout_marginLeft="40dp"
         android:src="@drawable/location" />
 
-    <com.google.android.material.textfield.TextInputLayout
+    <EditText
+        android:layout_width="300dp"
+        android:layout_height="40dp"
+        android:layout_marginLeft="100dp"
+        android:layout_marginTop="525dp"
+        android:hint="location">
+    </EditText>
+
+    <ImageView
+        android:id="@+id/email"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="600dp"
+        android:layout_marginLeft="40dp"
+        android:src="@drawable/email" />
+
+    <EditText
         android:layout_width="300dp"
         android:layout_height="40dp"
         android:layout_marginLeft="100dp"
         android:layout_marginTop="600dp"
-        android:hint="@string/app_name"
-        style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.Dense">
+        android:hint="email">
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <ProgressBar
-        android:id="@+id/progress_bar"
-        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/button_submit"
-        android:layout_alignParentStart="true"
-        android:layout_marginBottom="16dp" />
-
-    <Button
-        android:id="@+id/button_submit"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:text="Submit" />
+    </EditText>
 
 </RelativeLayout>

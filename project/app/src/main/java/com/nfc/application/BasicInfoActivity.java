@@ -61,8 +61,6 @@ public class BasicInfoActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_basic_info);
 
-        mProgressBar = findViewById(R.id.progress_bar);
-        mButtonSubmit = findViewById(R.id.button_submit);
         mStorageRef = FirebaseStorage.getInstance().getReference("uploads");
 
         picture = findViewById(R.id.picture);
@@ -106,7 +104,7 @@ public class BasicInfoActivity extends AppCompatActivity {
             }
         });
 
-        mButtonSubmit.setOnClickListener(new View.OnClickListener() {
+       mButtonSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (mUploadTask != null && mUploadTask.isInProgress()) {

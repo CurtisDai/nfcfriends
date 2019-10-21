@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.nfc.application.BusinessCard;
@@ -51,6 +52,12 @@ public class BusinessCardAdapter extends RecyclerView.Adapter<BusinessCardAdapte
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder{
+        TextView t_name;
+        TextView t_telephone;
+        TextView t_job;
+        TextView t_orgnization;
+        TextView t_email;
+        TextView t_location;
         View businessCardView;
         LinearLayout card_front;
         RelativeLayout card_back;
@@ -60,6 +67,11 @@ public class BusinessCardAdapter extends RecyclerView.Adapter<BusinessCardAdapte
             businessCardView = cardView;
             card_front = itemView.findViewById(R.id.item_front_ly);
             card_back = itemView.findViewById(R.id.item_back_ly);
+            t_name = card_back.findViewById(R.id.t_name);
+            t_telephone= card_back.findViewById(R.id.t_call);
+            t_orgnization = card_back.findViewById(R.id.t_orgnization);
+            t_email = card_back.findViewById(R.id.t_email);
+            t_location = card_back.findViewById(R.id.t_location);
         }
 
     }
@@ -138,6 +150,12 @@ public class BusinessCardAdapter extends RecyclerView.Adapter<BusinessCardAdapte
         mCardAdapterHelper.onBindViewHolder(holder.itemView, position, getItemCount());
         card_back_arr[position] = holder.card_back;
         card_front_arr[position] = holder.card_front;
+        BusinessCard card = mBusinessCardList.get(position);
+        holder.t_name.setText(card.getName());
+        holder.t_location.setText(card.getAddress());
+        holder.t_email.setText(card.getEmail());
+        holder.t_orgnization.setText(card.getOrganization());
+        holder.t_telephone.setText(card.getTelephone());
     }
 
     @Override

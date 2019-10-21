@@ -10,6 +10,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -17,6 +19,11 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 
@@ -32,8 +39,6 @@ import androidx.recyclerview.widget.LinearSnapHelper;
 import androidx.recyclerview.widget.RecyclerView;
 import library.CardScaleHelper;
 
-;
-
 
 public class HomePageActivity extends AppCompatActivity {
 
@@ -43,11 +48,16 @@ public class HomePageActivity extends AppCompatActivity {
     private LinearSnapHelper linearSnapHelper = null;
     private CardScaleHelper cardScaleHelper;
     private int mLastPos = -1;
+    private FirebaseFirestore db;
+    private BusinessCardAdapter adapter;
+    private ArrayList<String> friends;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home_page);
+        db = FirebaseFirestore.getInstance();
+        initialize();
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -78,47 +88,11 @@ public class HomePageActivity extends AppCompatActivity {
             }
         });
 
-        intitBusinessCard();
         recyclerView = findViewById(R.id.recycler_view);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         layoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
         recyclerView.setLayoutManager(layoutManager);
 
-
-        // mRecyclerView绑定scale效果
-        cardScaleHelper = new CardScaleHelper();
-        cardScaleHelper.setCurrentItemPos(2);
-        cardScaleHelper.attachToRecyclerView(recyclerView);
-
-        BusinessCardAdapter adapter = new BusinessCardAdapter(this, businessCardList);
-        recyclerView.setAdapter(adapter);
-
-        final String currentuser = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("users");
-        databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                dataSnapshot.child(currentuser);
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-    }
-
-    private void intitBusinessCard(){
-        for(int i = 0; i < 10; i++) {
-            BusinessCard Jason = new BusinessCard();
-            Jason.setName("Jason");
-            Jason.setFront(true);
-            businessCardList.add(Jason);
-            BusinessCard Hanson = new BusinessCard();
-            Hanson.setName("Hanson");
-            Hanson.setFront(true);
-            businessCardList.add(Hanson);
-        }
     }
 
     public boolean onCreateOptionsMenu(Menu menu){
@@ -148,6 +122,72 @@ public class HomePageActivity extends AppCompatActivity {
             default:
         }
         return true;
+    }
+
+    public void initialize(){
+        final String currentuser = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        final DocumentReference documentReference = db.collection("users").document(currentuser);
+        Log.d("current user", currentuser);
+        documentReference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    BusinessCard businessCard = new BusinessCard();
+                    setMyself(document, businessCard);
+                    friends = (ArrayList<String>) document.getData().get("friends");
+                    Log.d("friends", friends.toString());
+                    db.collection("users")
+                            .get()
+                            .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                @Override
+                                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                    if (task.isSuccessful()) {
+                                        for (QueryDocumentSnapshot document : task.getResult()) {
+                                            if (friends.contains(document.getId())) {
+                                                BusinessCard businessCard = new BusinessCard();
+                                                setInformation(document, businessCard);
+                                            }
+                                        }
+                                        Log.d("size", String.valueOf(businessCardList.size()));
+                                        cardScaleHelper = new CardScaleHelper();
+                                        cardScaleHelper.setCurrentItemPos(2);
+                                        cardScaleHelper.attachToRecyclerView(recyclerView);
+
+                                        adapter = new BusinessCardAdapter(HomePageActivity.this, businessCardList);
+                                        recyclerView.setAdapter(adapter);
+                                    } else {
+
+                                    }
+                                }
+                            });
+                }
+            }
+        });
+    }
+
+    public void setInformation(QueryDocumentSnapshot document, BusinessCard mbusinessCard){
+        mbusinessCard = new BusinessCard();
+        mbusinessCard.setName(document.get("name").toString());
+        mbusinessCard.setEmail(document.get("email").toString());
+        mbusinessCard.setJob(document.get("job").toString());
+        mbusinessCard.setTelephone(document.get("telephone").toString());
+        mbusinessCard.setAddress(document.get("address").toString());
+        mbusinessCard.setOrganization(document.get("organization").toString());
+        mbusinessCard.setFront(true);
+        businessCardList.add(mbusinessCard);
+    }
+
+    public void setMyself(DocumentSnapshot document, BusinessCard mbusinessCard){
+        mbusinessCard = new BusinessCard();
+        mbusinessCard.setName(document.getData().get("name").toString());
+        mbusinessCard.setEmail(document.getData().get("email").toString());
+        mbusinessCard.setJob(document.getData().get("job").toString());
+        mbusinessCard.setTelephone(document.getData().get("telephone").toString());
+        mbusinessCard.setAddress(document.getData().get("address").toString());
+        mbusinessCard.setOrganization(document.getData().get("organization").toString());
+        mbusinessCard.setFront(true);
+        businessCardList.add(mbusinessCard);
     }
 
 }

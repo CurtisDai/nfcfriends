@@ -29,11 +29,11 @@
         android:layout_marginLeft="40dp"/>
 
     <TextView
+        android:id = "@+id/t_name"
         android:layout_width="300dp"
         android:layout_height="40dp"
         android:layout_marginLeft="100dp"
         android:layout_marginTop="250dp"
-        android:text = "Hason"
         android:textStyle="bold"
         android:gravity="center_vertical">
 
@@ -49,11 +49,11 @@
 
 
     <TextView
+        android:id="@+id/t_call"
         android:layout_width="300dp"
         android:layout_height="40dp"
         android:layout_marginLeft="100dp"
         android:layout_marginTop="325dp"
-        android:text = "0420874568"
         android:textStyle="bold"
         android:gravity="center_vertical"/>
 
@@ -67,11 +67,11 @@
         android:src="@drawable/group" />
 
     <TextView
+        android:id="@+id/t_orgnization"
         android:layout_width="300dp"
         android:layout_height="40dp"
         android:layout_marginLeft="100dp"
         android:layout_marginTop="400dp"
-        android:text = "Melbourne University"
         android:gravity="center_vertical"
         android:textStyle="bold">
 
@@ -86,11 +86,11 @@
         android:src="@drawable/location" />
 
     <TextView
+        android:id="@+id/t_location"
         android:layout_width="300dp"
         android:layout_height="40dp"
         android:layout_marginTop="475dp"
         android:layout_marginLeft="100dp"
-        android:text="83 Flemington Road North Melbourne"
         android:gravity="center_vertical"
         android:textStyle="bold">
     </TextView>
@@ -104,11 +104,11 @@
         android:src="@drawable/email" />
 
     <TextView
+        android:id="@+id/t_email"
         android:layout_width="300dp"
         android:layout_height="40dp"
         android:layout_marginLeft="100dp"
         android:layout_marginTop="550dp"
-        android:text = "2804495816@qq.com"
         android:gravity="center_vertical"
         android:textStyle="bold">
 
