@@ -44,6 +44,8 @@ dependencies {
     implementation 'com.daimajia.androidanimations:library:2.3@aar'
     implementation "androidx.preference:preference:1.1.0"
     implementation 'com.google.firebase:firebase-firestore:21.1.1'
+    implementation 'com.google.firebase:firebase-storage:19.1.0'
+    implementation 'com.google.firebase:firebase-database:19.2.0'
 
 
     implementation 'com.android.support:recyclerview-v7:29.2.1'
