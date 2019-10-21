@@ -1,15 +1,13 @@
 package com.nfc.application;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.Bundle;
-import android.Manifest;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -40,9 +38,6 @@ import java.util.concurrent.ExecutionException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import util.ConstructJSON;
-import util.OkHttpNetworking;
-
 import static com.nfc.application.BasicInfoActivity.TAKE_PHOTO;
 
 
@@ -61,6 +56,7 @@ public class CardScanActivity extends AppCompatActivity {
     private ProgressBar progressBar;
 
     private EditText obtainedText;
+    private Uri imageUri;
 
     private String mCurrentPhotoPath;
     private String phoneNumber;
@@ -85,6 +81,8 @@ public class CardScanActivity extends AppCompatActivity {
                 public void onClick(View v) {
                     obtainedText.setText("");
                     startCameraActivityIntent();
+
+
                 }
             });
 
@@ -128,48 +126,56 @@ public class CardScanActivity extends AppCompatActivity {
         }
 
 
+
+
+
+    /**
+     * Starts the camera and requests permission to use the camera if permission doesn't exist
+     *
+     */
+    public void startCameraActivityIntent(){
+        //Intent to startCamera
+
+        File outputImage = new File(getExternalCacheDir(), "output_image.jpg");
+        try {
+            if(outputImage.exists()){
+                outputImage.delete();
+            }
+            outputImage.createNewFile();
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+        if(Build.VERSION.SDK_INT >= 24){
+            imageUri = FileProvider.getUriForFile(CardScanActivity.this,
+                    "com.example.nfc.application.fileprovider", outputImage);
+        }else{
+            imageUri = Uri.fromFile(outputImage);
+        }
+        //start camera
+        Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
+        startActivityForResult(intent, TAKE_PHOTO);
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-            super.onActivityResult(requestCode, resultCode, data);
-
-            if(requestCode == IMAGE_CAPTURE_REQUEST && resultCode == RESULT_OK){
-                String base64EncodedString = convertImageToBase64EncodedString();
-                ConstructJSON constructJSON = new ConstructJSON(base64EncodedString);
-                JSONObject object = constructJSON.doInBackground();
-//                VolleyNetworking volleyNetworking = new VolleyNetworking(this, progressBar, obtainedText);
-//                volleyNetworking.callGoogleVisionAPI(object);
-                deleteCapturedImage();
-            }
-        }
-
-
-        /**
-         * Starts the camera and requests permission to use the camera if permission doesn't exist
-         *
-         */
-        public void startCameraActivityIntent(){
-            //Intent to startCamera
-            Uri imageUri;
-            File outputImage = new File(getExternalCacheDir(), "output_image.jpg");
-            try {
-                if(outputImage.exists()){
-                    outputImage.delete();
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case TAKE_PHOTO:
+                if (resultCode == RESULT_OK) {
+                    try {
+                        Bitmap bitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream(imageUri));
+                        picture.setImageBitmap(bitmap);
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    }
                 }
-                outputImage.createNewFile();
-            }catch (IOException e){
-                e.printStackTrace();
-            }
-            if(Build.VERSION.SDK_INT >= 24){
-                imageUri = FileProvider.getUriForFile(CardScanActivity.this,
-                        "com.example.nfc.application.fileprovider", outputImage);
-            }else{
-                imageUri = Uri.fromFile(outputImage);
-            }
-            //start camera
-            Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
-            intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
-            startActivityForResult(intent, TAKE_PHOTO);
+                break;
+            default:
+                break;
         }
+
+    }
 
 
         /**

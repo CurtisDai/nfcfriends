@@ -19,6 +19,7 @@
         <activity android:name=".ContactsActivity"></activity>
         <activity android:name=".CardScanActivity" />
 
+<<<<<<< HEAD
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="com.example.nfc.application.fileprovider"
@@ -28,6 +29,8 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />
         </provider>
+=======
+>>>>>>> 204e94a0e070026a04f08bdf29305e8301402c69
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").
