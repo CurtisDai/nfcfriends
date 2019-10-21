@@ -93,7 +93,7 @@ public class HomePageActivity extends AppCompatActivity {
         BusinessCardAdapter adapter = new BusinessCardAdapter(this, businessCardList);
         recyclerView.setAdapter(adapter);
 
-        String currentuser = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        final String currentuser = FirebaseAuth.getInstance().getCurrentUser().getUid();
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("users");
         databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -140,10 +140,10 @@ public class HomePageActivity extends AppCompatActivity {
                 //Todo
                 Toast.makeText(this, "to do", Toast.LENGTH_LONG).show();
                 break;
-            case R.id.Scan:
-                Intent scan = new Intent(HomePageActivity.this, CardScanActivity.class);
-                startActivity(scan);
-                break;
+//            case R.id.Scan:
+//                Intent scan = new Intent(HomePageActivity.this, CardScanActivity.class);
+//                startActivity(scan);
+//                break;
 
             default:
         }
