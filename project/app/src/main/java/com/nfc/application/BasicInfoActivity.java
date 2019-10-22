@@ -29,6 +29,9 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.annotation.Target;
+import java.lang.reflect.Array;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -44,12 +47,15 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.storage.StorageTask;
 import com.google.firebase.storage.UploadTask;
+import com.googlecode.tesseract.android.TessBaseAPI;
 
 public class BasicInfoActivity extends AppCompatActivity {
 
     public static final int CHOOSE_PHOTO = 2;
     public static final int TAKE_PHOTO = 1;
     public static final int OCR = 3;
+
+    private TessBaseAPI mTess;
     private ImageView picture;
     private Uri imageUri;
     private Uri chosenImageUri;
@@ -61,7 +67,9 @@ public class BasicInfoActivity extends AppCompatActivity {
     private Button OCRButton;
     private EditText name_view;
     private EditText email_view;
+
     private EditText phone_view;
+    private Bitmap bitmap;
 
 
 
@@ -134,9 +142,26 @@ public class BasicInfoActivity extends AppCompatActivity {
         OCRButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(BasicInfoActivity.this,CardScanActivity.class);
+                File outputImage = new File(getExternalCacheDir(), "output_image.jpg");
+                try {
+                    if(outputImage.exists()){
+                        outputImage.delete();
+                    }
+                    outputImage.createNewFile();
+                }catch (IOException e){
+                    e.printStackTrace();
+                }
+                if(Build.VERSION.SDK_INT >= 24){
+                    imageUri = FileProvider.getUriForFile(BasicInfoActivity.this,
+                            "com.example.nfc.application.fileprovider", outputImage);
+                }else{
+                    imageUri = Uri.fromFile(outputImage);
+                }
+                //start camera
+                Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
+                intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
                 startActivityForResult(intent, OCR);
-                //Todo
+
             }
         });
     }
@@ -221,6 +246,14 @@ public class BasicInfoActivity extends AppCompatActivity {
                 super.onActivityResult(requestCode, resultCode, data);
             case OCR:
                 if (resultCode == RESULT_OK) {
+                    try {
+                        bitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream(imageUri));
+                        processImage();
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    }
+                }
+                if (resultCode == RESULT_OK) {
                     String name=data.getStringExtra("name");
                     String email=data.getStringExtra("email");
                     String phone=data.getStringExtra("phone");
@@ -255,33 +288,18 @@ public class BasicInfoActivity extends AppCompatActivity {
         }
     }
 
-    @TargetApi(19)
-    private void handleImageOnKitKat(Intent data){
-        String imagePath = null;
-        Uri uri = data.getData();
-        if(DocumentsContract.isDocumentUri(this,uri)){
-            //if document is uri, use document id to deal with
-            String docId = DocumentsContract.getDocumentId(uri);
-            if("com.android.providers.media.documents".equals(uri.getAuthority())) {
-                String id = docId.split(":")[1];
-                String selection = MediaStore.Images.Media._ID + "=" + id;
-                imagePath = getImagePath(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, selection);
-            }else if("com.android.providers.downloads.documents". equals(uri.getAuthority())){
-                Uri contentUri = ContentUris.withAppendedId(Uri.parse("content://downloads/publc_downloads"), Long.valueOf(docId));
-                imagePath = getImagePath(contentUri, null);
-            }
-        }else if("content".equalsIgnoreCase(uri.getScheme())){
-            imagePath = getImagePath(uri, null);
-        }else if("file".equalsIgnoreCase(uri.getScheme())){
-            imagePath = uri.getPath();
-        }
-        displayImage(imagePath);
-    }
-
-    private void handleImageBeforeKitKat(Intent data){
-        Uri uri = data.getData();
-        String imagePath = getImagePath(uri, null);
-        displayImage(imagePath);
+    public void processImage(){
+        String OCRresult = null;
+        //init image
+        mTess.setImage(bitmap);
+        OCRresult = mTess.getUTF8Text();
+        //displayText.setText(OCRresult);
+        String name = extractName(OCRresult);
+        String email = extractEmail(OCRresult);
+        String phone = extractPhone(OCRresult);
+        name_view.setText(name);
+        email_view.setText(email);
+        phone_view.setText(phone);
     }
 
     private String getImagePath(Uri uri, String selection){
@@ -304,5 +322,44 @@ public class BasicInfoActivity extends AppCompatActivity {
         }else{
             Toast.makeText(this, "fail to get image", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    public String extractName(String str){
+        System.out.println("Getting the Name");
+        final String NAME_REGEX = "^([A-Z]([a-z]*|\\.) *){1,2}([A-Z][a-z]+-?)+$";
+        Pattern p = Pattern.compile(NAME_REGEX, Pattern.MULTILINE);
+        Matcher m =  p.matcher(str);
+        String value = "";
+        if(m.find()){
+            value = m.group();
+
+        }
+        return value;
+    }
+
+    public String extractEmail(String str) {
+        System.out.println("Getting the email");
+        final String EMAIL_REGEX = "(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|\"(?:[\\x01-\\\\x08\\x0b\\x0c\\x0e-\\x1f\\x21\\x23-\\x5b\\x5d-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])*\")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\\x01-\\\\x08\\x0b\\x0c\\x0e-\\x1f\\x21-\\x5a\\x53-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])+)\\])";
+        Pattern p = Pattern.compile(EMAIL_REGEX, Pattern.MULTILINE);
+        Matcher m = p.matcher(str);   // get a matcher object
+        String value = "";
+        if(m.find()){
+            value = m.group();
+
+        }
+        return value;
+    }
+
+    public String extractPhone(String str){
+        System.out.println("Getting Phone Number");
+        final String PHONE_REGEX="(?:^|\\D)(\\d{3})[)\\-. ]*?(\\d{3})[\\-. ]*?(\\d{4})(?:$|\\D)";
+        Pattern p = Pattern.compile(PHONE_REGEX, Pattern.MULTILINE);
+        Matcher m = p.matcher(str);   // get a matcher object
+        String value = "";
+        if(m.find()){
+            value = m.group();
+
+        }
+        return value;
     }
 }
