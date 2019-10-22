@@ -47,6 +47,7 @@ public class BasicInfoActivity extends AppCompatActivity {
 
     public static final int CHOOSE_PHOTO = 2;
     public static final int TAKE_PHOTO = 1;
+    public static final int OCR = 3;
     private ImageView picture;
     private Uri imageUri;
     private Uri chosenImageUri;
@@ -55,6 +56,8 @@ public class BasicInfoActivity extends AppCompatActivity {
     private StorageTask mUploadTask;
     private Button mButtonSubmit;
     private ProgressBar mProgressBar;
+    private Button OCRButton;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,6 +67,7 @@ public class BasicInfoActivity extends AppCompatActivity {
         mProgressBar = findViewById(R.id.progress_bar);
         mButtonSubmit = findViewById(R.id.button_submit);
         mStorageRef = FirebaseStorage.getInstance().getReference("uploads");
+
 
         picture = findViewById(R.id.picture);
         ImageView chooseFromAlbum = findViewById(R.id.album);
@@ -114,6 +118,16 @@ public class BasicInfoActivity extends AppCompatActivity {
                 } else {
                     uploadFile();
                 }
+            }
+        });
+
+        OCRButton = findViewById(R.id.OCRButton);
+        OCRButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(BasicInfoActivity.this,CardScanActivity.class);
+                startActivityForResult(intent, 3);
+                //Todo
             }
         });
     }
@@ -196,6 +210,15 @@ public class BasicInfoActivity extends AppCompatActivity {
                     Log.i("MainActivtiy", "operation error");
                 }
                 super.onActivityResult(requestCode, resultCode, data);
+            case OCR:
+                if (resultCode == RESULT_OK) {
+                    String name=data.getStringExtra("name");
+                    String email=data.getStringExtra("email");
+                    String phone=data.getStringExtra("phone");
+                    
+
+                }
+
             default:
                 break;
         }
