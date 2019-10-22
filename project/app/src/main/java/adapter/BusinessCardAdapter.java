@@ -119,7 +119,6 @@ public class BusinessCardAdapter extends RecyclerView.Adapter<BusinessCardAdapte
             public void onClick(View view) {
                 //TO-DO show the map activity
                 Toast.makeText(context, "show map", Toast.LENGTH_LONG).show();
-
                 String address = "university of melbourne";
                 Intent intent = new Intent(context,com.nfc.application.MapsActivity.class);
                 intent.putExtra("address",address);

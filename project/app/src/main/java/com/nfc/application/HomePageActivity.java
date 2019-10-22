@@ -1,8 +1,12 @@
 package com.nfc.application;
 
+import android.Manifest;
+import android.content.ContentResolver;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -25,6 +29,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 
 import adapter.BusinessCardAdapter;
@@ -32,11 +37,14 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.LinearSnapHelper;
 import androidx.recyclerview.widget.RecyclerView;
+import de.hdodenhof.circleimageview.CircleImageView;
 import library.CardScaleHelper;
 
 //import for NFC function
@@ -62,6 +70,10 @@ public class HomePageActivity extends AppCompatActivity implements CreateNdefMes
     private FirebaseFirestore db;
     private BusinessCardAdapter adapter;
     private ArrayList<String> friends;
+    private CircleImageView circleImageView;
+    private static final int CHOOSE_PHOTO = 1;
+    private Uri chosenImageUri;
+    private Bitmap bitmap;
 
     //NFC Adapter
     private NfcAdapter mNfcAdapter = null;
@@ -93,15 +105,25 @@ public class HomePageActivity extends AppCompatActivity implements CreateNdefMes
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setHomeAsUpIndicator(R.drawable.ic_menu);
         }
-        navView.setCheckedItem(R.id.call);
-        navView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+
+        //find the button of upload photo
+        View navHeaderView = navView.getHeaderView(0);
+        circleImageView = navHeaderView.findViewById(R.id.icon_image);
+        circleImageView.setOnClickListener(new View.OnClickListener() {
             @Override
-            public boolean onNavigationItemSelected(MenuItem item) {
-                mDrawerLayout.closeDrawers();
-                return true;
+            public void onClick(View view) {
+                if(ContextCompat.checkSelfPermission(HomePageActivity.this,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){
+                    ActivityCompat.requestPermissions(HomePageActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                            1);
+                    Toast.makeText(HomePageActivity.this, "you clicked tht button", Toast.LENGTH_LONG).show();
+                }else{
+                    openAlbum();
+                }
             }
         });
 
+        //initialize recycleview
         recyclerView = findViewById(R.id.recycler_view);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         layoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
@@ -109,7 +131,6 @@ public class HomePageActivity extends AppCompatActivity implements CreateNdefMes
 
         //NFC Function Call
         checkNFCFunction();
-
     }
 
     public boolean onCreateOptionsMenu(Menu menu){
@@ -131,12 +152,8 @@ public class HomePageActivity extends AppCompatActivity implements CreateNdefMes
                 //Todo
                 Toast.makeText(this, "to do", Toast.LENGTH_LONG).show();
                 break;
-//            case R.id.Scan:
-//                Intent scan = new Intent(HomePageActivity.this, CardScanActivity.class);
-//                startActivity(scan);
-//                break;
-
             default:
+                break;
         }
         return true;
     }
@@ -187,7 +204,6 @@ public class HomePageActivity extends AppCompatActivity implements CreateNdefMes
         mbusinessCard = new BusinessCard();
         mbusinessCard.setName(document.get("name").toString());
         mbusinessCard.setEmail(document.get("email").toString());
-        mbusinessCard.setJob(document.get("job").toString());
         mbusinessCard.setTelephone(document.get("telephone").toString());
         mbusinessCard.setAddress(document.get("address").toString());
         mbusinessCard.setOrganization(document.get("organization").toString());
@@ -199,7 +215,6 @@ public class HomePageActivity extends AppCompatActivity implements CreateNdefMes
         mbusinessCard = new BusinessCard();
         mbusinessCard.setName(document.getData().get("name").toString());
         mbusinessCard.setEmail(document.getData().get("email").toString());
-        mbusinessCard.setJob(document.getData().get("job").toString());
         mbusinessCard.setTelephone(document.getData().get("telephone").toString());
         mbusinessCard.setAddress(document.getData().get("address").toString());
         mbusinessCard.setOrganization(document.getData().get("organization").toString());
@@ -261,4 +276,48 @@ public class HomePageActivity extends AppCompatActivity implements CreateNdefMes
         setIntent(intent);
     }
 
+    //achieve upload photo fucntion
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch(requestCode) {
+            case CHOOSE_PHOTO:
+                if (resultCode == RESULT_OK) {
+                    chosenImageUri = data.getData();
+                    Log.e("chosenImageUri", chosenImageUri.toString());
+                    //use content interface
+                    ContentResolver cr = this.getContentResolver();
+                    try {
+                        bitmap = BitmapFactory.decodeStream(cr.openInputStream(chosenImageUri));
+                        circleImageView.setImageBitmap(bitmap);
+                    } catch (FileNotFoundException e) {
+                        Log.e("Exception", e.getMessage(), e);
+                    }
+                } else {
+                    Log.i("HomePageActivity", "operation error");
+                }
+            default:
+                break;
+        }
+    }
+
+    private void openAlbum(){
+        Intent intent = new Intent("android.intent.action.GET_CONTENT");
+        intent.setType("image/*");
+        startActivityForResult(intent, CHOOSE_PHOTO);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int RequestCode, String[] permissions, int[] grantResults){
+        switch (RequestCode){
+            case 1:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                    openAlbum();
+                }else{
+                    Toast.makeText(this, "You denied the permission", Toast.LENGTH_SHORT).show();
+                }
+                break;
+            default:
+        }
+    }
 }
