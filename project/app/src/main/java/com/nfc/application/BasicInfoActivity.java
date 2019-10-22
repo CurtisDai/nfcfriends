@@ -19,8 +19,10 @@ import android.util.Log;
 import android.view.View;
 import android.webkit.MimeTypeMap;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
@@ -57,6 +59,10 @@ public class BasicInfoActivity extends AppCompatActivity {
     private Button mButtonSubmit;
     private ProgressBar mProgressBar;
     private Button OCRButton;
+    private EditText name_view;
+    private EditText email_view;
+    private EditText phone_view;
+
 
 
     @Override
@@ -64,12 +70,15 @@ public class BasicInfoActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_basic_info);
 
-        mProgressBar = findViewById(R.id.progress_bar);
-        mButtonSubmit = findViewById(R.id.button_submit);
         mStorageRef = FirebaseStorage.getInstance().getReference("uploads");
+        mButtonSubmit = findViewById(R.id.button_submit);
 
 
         picture = findViewById(R.id.picture);
+        name_view = findViewById(R.id.name_info);
+        email_view = findViewById(R.id.email_info);
+        phone_view = findViewById(R.id.phone_info);
+
         ImageView chooseFromAlbum = findViewById(R.id.album);
         ImageView takephoto = findViewById(R.id.photo);
         takephoto.setOnClickListener(new View.OnClickListener() {
@@ -110,7 +119,7 @@ public class BasicInfoActivity extends AppCompatActivity {
             }
         });
 
-        mButtonSubmit.setOnClickListener(new View.OnClickListener() {
+       mButtonSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (mUploadTask != null && mUploadTask.isInProgress()) {
@@ -126,7 +135,7 @@ public class BasicInfoActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(BasicInfoActivity.this,CardScanActivity.class);
-                startActivityForResult(intent, 3);
+                startActivityForResult(intent, OCR);
                 //Todo
             }
         });
@@ -215,8 +224,9 @@ public class BasicInfoActivity extends AppCompatActivity {
                     String name=data.getStringExtra("name");
                     String email=data.getStringExtra("email");
                     String phone=data.getStringExtra("phone");
-                    
-
+                    name_view.setText(name);
+                    email_view.setText(email);
+                    phone_view.setText(phone);
                 }
 
             default:

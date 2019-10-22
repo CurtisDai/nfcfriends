@@ -44,12 +44,12 @@
         android:layout_marginLeft="40dp"/>
 
     <EditText
+        android:id="@+id/name_info"
         android:layout_width="300dp"
         android:layout_height="40dp"
         android:layout_marginLeft="100dp"
         android:layout_marginTop="300dp"
         android:hint="Name">
-
     </EditText>
 
 
@@ -63,6 +63,7 @@
 
 
     <EditText
+        android:id="@+id/phone_info"
         android:layout_width="300dp"
         android:layout_height="40dp"
         android:layout_marginLeft="100dp"
@@ -81,6 +82,7 @@
         android:src="@drawable/group" />
 
     <EditText
+        android:id="@+id/organ_info"
         android:layout_width="300dp"
         android:layout_height="40dp"
         android:layout_marginLeft="100dp"
@@ -98,6 +100,7 @@
         android:src="@drawable/location" />
 
     <EditText
+        android:id="@+id/loc_info"
         android:layout_width="300dp"
         android:layout_height="40dp"
         android:layout_marginLeft="100dp"
@@ -114,11 +117,13 @@
         android:src="@drawable/email" />
 
     <EditText
+        android:id="@+id/email_info"
         android:layout_width="300dp"
         android:layout_height="40dp"
         android:layout_marginLeft="100dp"
         android:layout_marginTop="600dp"
-        android:hint="email">
+        android:hint="email"/>
+
 
     <ProgressBar
         android:id="@+id/progress_bar"
@@ -154,5 +159,6 @@
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:text="Submit" />
+
 
 </RelativeLayout>
