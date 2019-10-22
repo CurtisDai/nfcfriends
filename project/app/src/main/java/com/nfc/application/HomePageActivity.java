@@ -39,8 +39,19 @@ import androidx.recyclerview.widget.LinearSnapHelper;
 import androidx.recyclerview.widget.RecyclerView;
 import library.CardScaleHelper;
 
+//import for NFC function
+import android.nfc.NdefMessage;
+import android.nfc.NdefRecord;
+import android.nfc.NfcAdapter;
+import android.nfc.NfcAdapter.CreateNdefMessageCallback;
+import android.nfc.NfcEvent;
+import android.os.Parcelable;
+import android.provider.Settings;
+import android.widget.Toast;
+import java.nio.charset.Charset;
 
-public class HomePageActivity extends AppCompatActivity {
+
+public class HomePageActivity extends AppCompatActivity implements CreateNdefMessageCallback {
 
     private DrawerLayout mDrawerLayout;
     private ArrayList<BusinessCard> businessCardList = new ArrayList<BusinessCard>();
@@ -51,6 +62,9 @@ public class HomePageActivity extends AppCompatActivity {
     private FirebaseFirestore db;
     private BusinessCardAdapter adapter;
     private ArrayList<String> friends;
+
+    //NFC Adapter
+    private NfcAdapter mNfcAdapter = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,6 +106,9 @@ public class HomePageActivity extends AppCompatActivity {
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         layoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
         recyclerView.setLayoutManager(layoutManager);
+
+        //NFC Function Call
+        checkNFCFunction();
 
     }
 
@@ -188,6 +205,60 @@ public class HomePageActivity extends AppCompatActivity {
         mbusinessCard.setOrganization(document.getData().get("organization").toString());
         mbusinessCard.setFront(true);
         businessCardList.add(mbusinessCard);
+    }
+
+    //checkNFCFunction Implementation
+    private void checkNFCFunction(){
+        //getting the default NFC adapter.
+        mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
+
+        if(mNfcAdapter==null){
+            Toast.makeText(getApplicationContext(),"Sorry, this device does not have NFC.",Toast.LENGTH_LONG).show();
+            return;
+        } else {
+            if(!mNfcAdapter.isEnabled()){
+                Toast.makeText(getApplicationContext(),"NFC is not Enabled!",Toast.LENGTH_LONG).show();
+                Intent setnfc = new Intent(Settings.ACTION_NFC_SETTINGS);
+                startActivity(setnfc);
+                return;
+            } else if(!mNfcAdapter.isNdefPushEnabled()){
+                Toast.makeText(getApplicationContext(),"NFC Beam is not Enabled!",Toast.LENGTH_LONG).show();
+                Intent setnfc = new Intent(Settings.ACTION_NFCSHARING_SETTINGS);
+                startActivity(setnfc);
+                return;
+            }else {
+                mNfcAdapter.setNdefPushMessageCallback(this,this);
+                Toast.makeText(getApplicationContext(),"NFC is ready to use.",Toast.LENGTH_LONG).show();
+                return;
+            }
+        }
+    }
+
+    @Override
+    public NdefMessage createNdefMessage(NfcEvent nfcEvent){
+        String message = "nfc test test";
+        NdefRecord ndefRecord = NdefRecord.createMime("text/plain",message.getBytes());
+        NdefMessage ndefMessage = new NdefMessage(ndefRecord);
+        return ndefMessage;
+    }
+
+    protected void onResume(){
+        super.onResume();
+        Intent intent = getIntent();
+        if(NfcAdapter.ACTION_NDEF_DISCOVERED.equals(intent.getAction())){
+            Parcelable[] rawMessage = intent.getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES);
+            NdefMessage message = (NdefMessage) rawMessage[0];
+            String text = new String(message.getRecords()[0].getPayload());
+            Log.d("suc",text);
+        }else{
+            Log.d("unsuc","Where is my fucking text???");
+        }
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent){
+        super.onNewIntent(intent);
+        setIntent(intent);
     }
 
 }
