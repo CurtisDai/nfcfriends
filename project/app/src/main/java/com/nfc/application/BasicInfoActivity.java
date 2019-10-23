@@ -37,6 +37,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.annotation.Target;
 import java.lang.reflect.Array;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -50,6 +52,8 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.common.math.Quantiles;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
@@ -68,16 +72,19 @@ public class BasicInfoActivity extends AppCompatActivity {
     private Uri imageUri;
     private Uri chosenImageUri;
     private StorageReference mStorageRef;
-    private DatabaseReference mDatabaseRef;
+    private FirebaseFirestore db;
     private StorageTask mUploadTask;
     private Button mButtonSubmit;
     private ProgressBar mProgressBar;
     private Button OCRButton;
     private EditText name_view;
     private EditText email_view;
+    private EditText phone_view;
+    private EditText name_info;
+    private EditText organ_info;
+    private EditText loc_info;
     private String currentUser;
 
-    private EditText phone_view;
     private Bitmap bitmap;
     private String datapath = null;
 
@@ -87,13 +94,15 @@ public class BasicInfoActivity extends AppCompatActivity {
         setContentView(R.layout.activity_basic_info);
 
         mStorageRef = FirebaseStorage.getInstance().getReference("cover");
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
         mButtonSubmit = findViewById(R.id.button_submit);
-
 
         picture = findViewById(R.id.picture);
         name_view = findViewById(R.id.name_info);
         email_view = findViewById(R.id.email_info);
         phone_view = findViewById(R.id.phone_info);
+        name_info = findViewById(R.id.name_info);
+        organ_info = findViewById(R.id.organ_info);
         currentUser = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
         String language = "eng";
@@ -154,9 +163,22 @@ public class BasicInfoActivity extends AppCompatActivity {
                     Toast.makeText(BasicInfoActivity.this, "Upload in progress", Toast.LENGTH_SHORT).show();
                 } else {
                     uploadFile();
+                    uploadInfo();
                 }
             }
         });
+    }
+
+    private void uploadInfo() {
+        Map<String, Object> data = new HashMap<>();
+        data.put("name", name_info);
+        data.put("address", loc_info);
+        data.put("email", email_view);
+        data.put("organization", organ_info);
+        data.put("telephone", phone_view);
+
+        db.collection("cities").document("BJ")
+                .set(data, SetOptions.merge());
     }
 
     private String getFileExtension(Uri uri) {
