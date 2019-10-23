@@ -6,7 +6,7 @@
     <string name="Password">Password</string>
     <string name="Login">Login</string>
     <string name="Logout">Logout</string>
-    <string name="Name">Username</string>
+    <string name="Name">Name</string>
     <string name="CreateAccount">Create Account</string>
     <string name="haveaccount">Already a member? Login</string>
     <string name="no_account">No account yet? Create one</string>
@@ -15,10 +15,14 @@
     <string name="firebase">firebase</string>
     <string name="title_activity_organization_map">Map</string>
     <string name="title_activity_maps">Map</string>
+    <string name="Slogan">NFC Friends</string>
 
-    <string name="text_goes_here">text goes here</string>
+    <string name="text_goes_here">Text goes here</string>
     <string name="contacts">contacts</string>
-    <string name="phone">phone</string>
+    <string name="phone">Phone</string>
+    <string name="company">Company</string>
+    <string name="location">Location</string>
+
 
     <string name="button_to_open_camera">button to open camera</string>
 </resources>

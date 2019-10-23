@@ -18,7 +18,8 @@
             android:layout_height="75dp"
             android:layout_marginTop="100dp"
             android:layout_marginLeft="100dp"
-            android:src="@drawable/camera" />
+            android:src="@drawable/icon_square_camera"
+            />
 
         <ImageView
             android:id="@+id/album"
@@ -26,7 +27,7 @@
             android:layout_height="75dp"
             android:layout_marginTop="100dp"
             android:layout_marginLeft="250dp"
-            android:src="@drawable/album"/>
+            android:src="@drawable/icon_square_alburm"/>
 
         <ImageView
             android:id="@+id/picture"
@@ -39,18 +40,31 @@
         android:id="@+id/person"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:src="@drawable/profile"
+        android:layout_marginStart="40dp"
         android:layout_marginTop="300dp"
-        android:layout_marginLeft="40dp"/>
+        android:src="@drawable/icon_name" />
 
-    <EditText
+    <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/name_info"
-        android:layout_width="300dp"
-        android:layout_height="40dp"
-        android:layout_marginLeft="100dp"
-        android:layout_marginTop="300dp"
-        android:hint="Name">
-    </EditText>
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="100dp"
+        android:layout_marginTop="290dp">
+        <EditText
+
+            android:layout_width="300dp"
+            android:layout_height="40dp"
+            android:hint="@string/Name"/>
+    </com.google.android.material.textfield.TextInputLayout>
+
+<!--    <EditText-->
+<!--        android:id="@+id/name_info"-->
+<!--        android:layout_width="300dp"-->
+<!--        android:layout_height="40dp"-->
+<!--        android:layout_marginLeft="100dp"-->
+<!--        android:layout_marginTop="300dp"-->
+<!--        android:hint="Name">-->
+<!--    </EditText>-->
 
 
     <ImageView
@@ -59,18 +73,21 @@
         android:layout_height="40dp"
         android:layout_marginTop="375dp"
         android:layout_marginLeft="40dp"
-        android:src="@drawable/call" />
+        android:src="@drawable/icon_phone" />
 
-
-    <EditText
+    <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/phone_info"
-        android:layout_width="300dp"
-        android:layout_height="40dp"
-        android:layout_marginLeft="100dp"
-        android:layout_marginTop="375dp"
-        android:hint = "call">
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="100dp"
+        android:layout_marginTop="365dp">
+        <EditText
+            android:layout_width="300dp"
+            android:layout_height="40dp"
+            android:hint = "@string/phone">
+        </EditText>
+    </com.google.android.material.textfield.TextInputLayout>
 
-    </EditText>
 
 
     <ImageView
@@ -79,17 +96,24 @@
         android:layout_height="40dp"
         android:layout_marginTop="450dp"
         android:layout_marginLeft="40dp"
-        android:src="@drawable/group" />
+        android:src="@drawable/icon_company" />
 
-    <EditText
+
+    <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/organ_info"
-        android:layout_width="300dp"
-        android:layout_height="40dp"
-        android:layout_marginLeft="100dp"
-        android:layout_marginTop="450dp"
-        android:hint="organization">
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="100dp"
+        android:layout_marginTop="440dp">
+        <EditText
+            android:layout_width="300dp"
+            android:layout_height="40dp"
+            android:hint="@string/company">
 
-    </EditText>
+        </EditText>
+    </com.google.android.material.textfield.TextInputLayout>
+
+
 
     <ImageView
         android:id="@+id/location"
@@ -97,16 +121,23 @@
         android:layout_height="40dp"
         android:layout_marginTop="525dp"
         android:layout_marginLeft="40dp"
-        android:src="@drawable/location" />
+        android:src="@drawable/icon_location" />
 
-    <EditText
+
+    <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/loc_info"
-        android:layout_width="300dp"
-        android:layout_height="40dp"
-        android:layout_marginLeft="100dp"
-        android:layout_marginTop="525dp"
-        android:hint="location">
-    </EditText>
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="100dp"
+        android:layout_marginTop="515dp">
+        <EditText
+            android:layout_width="300dp"
+            android:layout_height="40dp"
+            android:hint="@string/location">
+        </EditText>
+    </com.google.android.material.textfield.TextInputLayout>
+
+
 
     <ImageView
         android:id="@+id/email"
@@ -114,15 +145,20 @@
         android:layout_height="40dp"
         android:layout_marginTop="600dp"
         android:layout_marginLeft="40dp"
-        android:src="@drawable/email" />
+        android:src="@drawable/icon_email" />
 
-    <EditText
+
+    <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/email_info"
-        android:layout_width="300dp"
-        android:layout_height="40dp"
-        android:layout_marginLeft="100dp"
-        android:layout_marginTop="600dp"
-        android:hint="email"/>
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="100dp"
+        android:layout_marginTop="590dp">
+        <EditText
+            android:layout_width="300dp"
+            android:layout_height="40dp"
+            android:hint="@string/Email"/>
+    </com.google.android.material.textfield.TextInputLayout>
 
 
     <ProgressBar
@@ -134,23 +170,20 @@
         android:layout_alignParentStart="true"
         android:layout_marginBottom="16dp" />
 
+
+
     <Button
         android:id="@+id/OCRButton"
-        android:layout_width="106dp"
-        android:layout_height="48dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginBottom="10dp"
-        android:layout_weight="1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:background="@drawable/rounded_corners"
-        android:padding="10dp"
+        android:layout_alignParentBottom="true"
         android:text="OCR"
         android:textAllCaps="false"
         android:textColor="#424242"
         android:textSize="16sp"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent" />
+        app:layout_constraintTop_toTopOf ="@id/button_submit"
+        app:layout_constraintRight_toLeftOf="@id/button_submit" />
 
     <Button
         android:id="@+id/button_submit"
@@ -158,6 +191,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
+        android:background="@drawable/rounded_corners_blue"
         android:text="Submit" />
 
 

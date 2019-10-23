@@ -3,7 +3,9 @@
     android:id="@+id/item_back_ly"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:textColor="@color/theme_black"
+    android:background="@color/theme_white">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -24,15 +26,16 @@
         android:id="@+id/person"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:src="@drawable/profile"
+        android:src="@drawable/icon_name"
         android:layout_marginTop="250dp"
-        android:layout_marginLeft="40dp"/>
+        android:layout_marginStart="40dp"
+        android:contentDescription="@string/Name"/>
 
     <TextView
         android:id = "@+id/t_name"
         android:layout_width="300dp"
         android:layout_height="40dp"
-        android:layout_marginLeft="100dp"
+        android:layout_marginStart="100dp"
         android:layout_marginTop="250dp"
         android:textStyle="bold"
         android:gravity="center_vertical">
@@ -44,15 +47,16 @@
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:layout_marginTop="325dp"
-        android:layout_marginLeft="40dp"
-        android:src="@drawable/call" />
+        android:layout_marginStart="40dp"
+        android:src="@drawable/icon_phone"
+        android:contentDescription="@string/phone"/>
 
 
     <TextView
         android:id="@+id/t_call"
         android:layout_width="300dp"
         android:layout_height="40dp"
-        android:layout_marginLeft="100dp"
+        android:layout_marginStart="100dp"
         android:layout_marginTop="325dp"
         android:textStyle="bold"
         android:gravity="center_vertical"/>
@@ -63,14 +67,15 @@
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:layout_marginTop="400dp"
-        android:layout_marginLeft="40dp"
-        android:src="@drawable/group" />
+        android:layout_marginStart="40dp"
+        android:src="@drawable/icon_company"
+        android:contentDescription="@string/company"/>
 
     <TextView
         android:id="@+id/t_orgnization"
         android:layout_width="300dp"
         android:layout_height="40dp"
-        android:layout_marginLeft="100dp"
+        android:layout_marginStart="100dp"
         android:layout_marginTop="400dp"
         android:gravity="center_vertical"
         android:textStyle="bold">
@@ -82,15 +87,16 @@
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:layout_marginTop="475dp"
-        android:layout_marginLeft="40dp"
-        android:src="@drawable/location" />
+        android:layout_marginStart="40dp"
+        android:src="@drawable/icon_location"
+        android:contentDescription="@string/location"/>
 
     <TextView
         android:id="@+id/t_location"
         android:layout_width="300dp"
         android:layout_height="40dp"
         android:layout_marginTop="475dp"
-        android:layout_marginLeft="100dp"
+        android:layout_marginStart="100dp"
         android:gravity="center_vertical"
         android:textStyle="bold">
     </TextView>
@@ -99,15 +105,16 @@
         android:id="@+id/email"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:layout_marginLeft="40dp"
+        android:layout_marginStart="40dp"
         android:layout_marginTop="550dp"
-        android:src="@drawable/email" />
+        android:src="@drawable/icon_email"
+        android:contentDescription="@string/Email"/>
 
     <TextView
         android:id="@+id/t_email"
         android:layout_width="300dp"
         android:layout_height="40dp"
-        android:layout_marginLeft="100dp"
+        android:layout_marginStart="100dp"
         android:layout_marginTop="550dp"
         android:gravity="center_vertical"
         android:textStyle="bold">

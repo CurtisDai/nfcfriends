@@ -1,12 +1,8 @@
 package com.nfc.application;
 
-import android.app.Activity;
-import android.app.ProgressDialog;
-import android.content.ComponentName;
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.UserManager;
+
 import androidx.preference.PreferenceManager;
 import android.util.Log;
 
@@ -18,15 +14,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-
-import static java.security.AccessController.getContext;
 
 
 public class LoginActivity extends BaseActivity {
@@ -51,7 +44,7 @@ public class LoginActivity extends BaseActivity {
             LoginActivity.this.finish();
         }
 
-        setContentView(R.layout.card_login);
+        setContentView(R.layout.activity_login);
         FirebaseApp.initializeApp(this);
         mAth = FirebaseAuth.getInstance();
         _emailText = findViewById(R.id.username);
