@@ -2,6 +2,7 @@ package com.nfc.application;
 
 import android.Manifest;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -16,8 +17,15 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Registry;
+import com.bumptech.glide.annotation.GlideModule;
+import com.bumptech.glide.module.AppGlideModule;
+import com.firebase.ui.storage.images.FirebaseImageLoader;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.navigation.NavigationView;
@@ -36,6 +44,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 
 import adapter.BusinessCardAdapter;
@@ -66,6 +75,10 @@ import android.provider.Settings;
 import android.widget.Toast;
 import java.nio.charset.Charset;
 
+import com.bumptech.glide.Glide;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+
 
 public class HomePageActivity extends AppCompatActivity implements CreateNdefMessageCallback {
 
@@ -76,6 +89,8 @@ public class HomePageActivity extends AppCompatActivity implements CreateNdefMes
     private CardScaleHelper cardScaleHelper;
     private int mLastPos = -1;
     private FirebaseFirestore db;
+    private FirebaseStorage storage;
+    private StorageReference storageRef;
     private BusinessCardAdapter adapter;
     private ArrayList<String> friends;
     private CircleImageView circleImageView;
@@ -84,11 +99,31 @@ public class HomePageActivity extends AppCompatActivity implements CreateNdefMes
     //NFC Adapter
     private NfcAdapter mNfcAdapter = null;
 
+    private TextView name;
+    private TextView address;
+    private TextView email;
+    private TextView orga;
+    private TextView tele;
+    private ImageView cover;
+    private CircleImageView portrait;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home_page);
+
+        name = findViewById(R.id.t_name);
+        address = findViewById(R.id.t_location);
+        email = findViewById(R.id.t_email);
+        orga = findViewById(R.id.t_orgnization);
+        tele = findViewById(R.id.t_call);
+        cover = findViewById(R.id.imageView);
+        portrait = findViewById(R.id.icon_image);
+
         db = FirebaseFirestore.getInstance();
+        storage  = FirebaseStorage.getInstance();
+        storageRef = storage.getReference();
+
         initialize();
 
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -196,8 +231,9 @@ public class HomePageActivity extends AppCompatActivity implements CreateNdefMes
                 if (task.isSuccessful()) {
                     DocumentSnapshot document = task.getResult();
                     if (document.exists()){
-                        BusinessCard businessCard = new BusinessCard();
-                        setMyself(document, businessCard);
+                        StorageReference cover_url = storageRef.child("cover/" + currentuser + ".jpg");
+                        StorageReference profilePic_url = storageRef.child("portrait/" + currentuser + ".jpg");
+                        setMyself(document, cover_url, profilePic_url);
                         friends = (ArrayList<String>) document.getData().get("friends");
                         Log.d("friends", friends.toString());
                         db.collection("users").get()
@@ -242,14 +278,16 @@ public class HomePageActivity extends AppCompatActivity implements CreateNdefMes
         businessCardList.add(mbusinessCard);
     }
 
-    public void setMyself(DocumentSnapshot document, BusinessCard mbusinessCard){
-        mbusinessCard = new BusinessCard();
+    public void setMyself(DocumentSnapshot document, StorageReference cover, StorageReference profilePic){
+        BusinessCard mbusinessCard = new BusinessCard();
         mbusinessCard.setName(document.getData().get("name").toString());
         mbusinessCard.setEmail(document.getData().get("email").toString());
         mbusinessCard.setTelephone(document.getData().get("telephone").toString());
         mbusinessCard.setAddress(document.getData().get("address").toString());
         mbusinessCard.setOrganization(document.getData().get("organization").toString());
         mbusinessCard.setFront(true);
+        mbusinessCard.setCover_url(cover);
+        mbusinessCard.setProfilePic_url(profilePic);
         businessCardList.add(mbusinessCard);
     }
 
