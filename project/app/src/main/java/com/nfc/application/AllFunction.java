@@ -43,7 +43,7 @@ public class AllFunction {
         BitmapFactory.decodeFile(imagePath, options);
         int height = options.outHeight;
         int width= options.outWidth;
-        int inSampleSize = 5; // 默认像素压缩比例，压缩为原图的1/2
+        int inSampleSize = 2; // 默认像素压缩比例，压缩为原图的1/2
         int minLen = Math.min(height, width); // 原图的最小边长
         if(minLen > 100) { // 如果原始图像的最小边长大于100dp（此处单位我认为是dp，而非px）
             float ratio = (float)minLen / 100.0f; // 计算像素压缩比例
