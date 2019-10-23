@@ -67,7 +67,6 @@ public class BasicInfoActivity extends AppCompatActivity {
     private Button OCRButton;
     private EditText name_view;
     private EditText email_view;
-
     private EditText phone_view;
     private Bitmap bitmap;
 

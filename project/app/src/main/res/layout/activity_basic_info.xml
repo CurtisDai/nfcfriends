@@ -45,13 +45,13 @@
         android:src="@drawable/icon_name" />
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/name_info"
+
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="100dp"
         android:layout_marginTop="290dp">
         <EditText
-
+            android:id="@+id/name_info"
             android:layout_width="300dp"
             android:layout_height="40dp"
             android:hint="@string/Name"/>
@@ -76,12 +76,13 @@
         android:src="@drawable/icon_phone" />
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/phone_info"
+
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="100dp"
         android:layout_marginTop="365dp">
         <EditText
+            android:id="@+id/phone_info"
             android:layout_width="300dp"
             android:layout_height="40dp"
             android:hint = "@string/phone">
@@ -100,12 +101,13 @@
 
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/organ_info"
+
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="100dp"
         android:layout_marginTop="440dp">
         <EditText
+            android:id="@+id/organ_info"
             android:layout_width="300dp"
             android:layout_height="40dp"
             android:hint="@string/company">
@@ -125,12 +127,13 @@
 
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/loc_info"
+
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="100dp"
         android:layout_marginTop="515dp">
         <EditText
+            android:id="@+id/loc_info"
             android:layout_width="300dp"
             android:layout_height="40dp"
             android:hint="@string/location">
@@ -149,12 +152,13 @@
 
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/email_info"
+
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="100dp"
         android:layout_marginTop="590dp">
         <EditText
+            android:id="@+id/email_info"
             android:layout_width="300dp"
             android:layout_height="40dp"
             android:hint="@string/Email"/>

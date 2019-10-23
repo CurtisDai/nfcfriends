@@ -5,18 +5,18 @@
     <item
         android:id="@+id/Edit"
         android:title="Edit"
-        android:icon = "@drawable/edit"
+        android:icon = "@drawable/icon_edit"
         app:showAsAction="ifRoom"/>
     <item
         android:id="@+id/Delete"
         android:title="Delete"
-        android:icon = "@drawable/delete"
+        android:icon = "@drawable/icon_delete"
         app:showAsAction = "ifRoom"/>
 
     <item
         android:id="@+id/Scan"
-        android:title="Scan"
-        android:icon = "@drawable/camera"
+        android:title="@string/Logout"
+        android:icon = "@drawable/icon_logout"
         app:showAsAction = "ifRoom"/>
 
 
