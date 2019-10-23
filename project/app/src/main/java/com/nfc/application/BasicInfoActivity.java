@@ -6,12 +6,14 @@ import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.AssetManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
@@ -25,9 +27,14 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.lang.annotation.Target;
 import java.lang.reflect.Array;
 import java.util.regex.Matcher;
@@ -41,6 +48,7 @@ import androidx.core.content.FileProvider;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.common.math.Quantiles;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
@@ -53,7 +61,6 @@ public class BasicInfoActivity extends AppCompatActivity {
 
     public static final int CHOOSE_PHOTO = 2;
     public static final int TAKE_PHOTO = 1;
-    public static final int OCR = 3;
 
     private TessBaseAPI mTess;
     private ImageView picture;
@@ -70,8 +77,7 @@ public class BasicInfoActivity extends AppCompatActivity {
 
     private EditText phone_view;
     private Bitmap bitmap;
-
-
+    private String datapath = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,12 +93,20 @@ public class BasicInfoActivity extends AppCompatActivity {
         email_view = findViewById(R.id.email_info);
         phone_view = findViewById(R.id.phone_info);
 
+        String language = "eng";
+        datapath = getFilesDir() +"/assets/";
+        mTess = new TessBaseAPI();
+        checkFile(new File(Environment.getExternalStorageDirectory().getPath() + "/tessdata/"));
+        mTess.init(Environment.getExternalStorageDirectory().getPath(), language);
+
         ImageView chooseFromAlbum = findViewById(R.id.album);
         ImageView takephoto = findViewById(R.id.photo);
+
+        //achieve OCR function
         takephoto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                File outputImage = new File(getExternalCacheDir(), "output_image.jpg");
+                File outputImage = new File(Environment.getExternalStorageDirectory(), "output_image.jpg");
                 try {
                     if(outputImage.exists()){
                         outputImage.delete();
@@ -111,9 +125,11 @@ public class BasicInfoActivity extends AppCompatActivity {
                 Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
                 intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
                 startActivityForResult(intent, TAKE_PHOTO);
+
             }
         });
 
+        //choose photo from Album
         chooseFromAlbum.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -127,7 +143,8 @@ public class BasicInfoActivity extends AppCompatActivity {
             }
         });
 
-       mButtonSubmit.setOnClickListener(new View.OnClickListener() {
+        //submit the cover to the firebase
+        mButtonSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (mUploadTask != null && mUploadTask.isInProgress()) {
@@ -135,33 +152,6 @@ public class BasicInfoActivity extends AppCompatActivity {
                 } else {
                     uploadFile();
                 }
-            }
-        });
-
-        OCRButton = findViewById(R.id.OCRButton);
-        OCRButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                File outputImage = new File(getExternalCacheDir(), "output_image.jpg");
-                try {
-                    if(outputImage.exists()){
-                        outputImage.delete();
-                    }
-                    outputImage.createNewFile();
-                }catch (IOException e){
-                    e.printStackTrace();
-                }
-                if(Build.VERSION.SDK_INT >= 24){
-                    imageUri = FileProvider.getUriForFile(BasicInfoActivity.this,
-                            "com.example.nfc.application.fileprovider", outputImage);
-                }else{
-                    imageUri = Uri.fromFile(outputImage);
-                }
-                //start camera
-                Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
-                intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
-                startActivityForResult(intent, OCR);
-
             }
         });
     }
@@ -220,57 +210,29 @@ public class BasicInfoActivity extends AppCompatActivity {
         switch (requestCode) {
             case TAKE_PHOTO:
                 if (resultCode == RESULT_OK) {
-                    try {
-                        Bitmap bitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream(imageUri));
-                        picture.setImageBitmap(bitmap);
-                    } catch (FileNotFoundException e) {
-                        e.printStackTrace();
-                    }
+                    bitmap = AllFunction.getObject().compressFromCamera();
+                    processImage();
                 }
                 break;
             case CHOOSE_PHOTO:
                 if(resultCode == RESULT_OK) {
                     chosenImageUri = data.getData();
                     Log.e("chosenImageUri", chosenImageUri.toString());
-                    //use content interface
                     ContentResolver cr = this.getContentResolver();
-                    try{
-                        Bitmap bitmap = BitmapFactory.decodeStream(cr.openInputStream(chosenImageUri));
-                        picture.setImageBitmap(bitmap);
-                    } catch (FileNotFoundException e){
-                        Log.e("Exception", e.getMessage(),e);
-                    }
+                    Bitmap bitmap = AllFunction.getObject().compressFromAlbum(cr,chosenImageUri);
+                    picture.setImageBitmap(bitmap);
+
                 }else{
                     Log.i("MainActivtiy", "operation error");
                 }
                 super.onActivityResult(requestCode, resultCode, data);
-            case OCR:
-                if (resultCode == RESULT_OK) {
-                    try {
-                        bitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream(imageUri));
-                        processImage();
-                    } catch (FileNotFoundException e) {
-                        e.printStackTrace();
-                    }
-                }
-                if (resultCode == RESULT_OK) {
-                    String name=data.getStringExtra("name");
-                    String email=data.getStringExtra("email");
-                    String phone=data.getStringExtra("phone");
-                    name_view.setText(name);
-                    email_view.setText(email);
-                    phone_view.setText(phone);
-                }
-
-            default:
-                break;
         }
     }
-    private void openAlbum(){
 
+    //the support function of choose photo
+    private void openAlbum(){
         Intent intent = new Intent("android.intent.action.GET_CONTENT");
         intent.setType("image/*");
-
         startActivityForResult(intent, CHOOSE_PHOTO);
     }
 
@@ -288,23 +250,9 @@ public class BasicInfoActivity extends AppCompatActivity {
         }
     }
 
-    public void processImage(){
-        String OCRresult = null;
-        //init image
-        mTess.setImage(bitmap);
-        OCRresult = mTess.getUTF8Text();
-        //displayText.setText(OCRresult);
-        String name = extractName(OCRresult);
-        String email = extractEmail(OCRresult);
-        String phone = extractPhone(OCRresult);
-        name_view.setText(name);
-        email_view.setText(email);
-        phone_view.setText(phone);
-    }
-
     private String getImagePath(Uri uri, String selection){
         String path = null;
-        Cursor cursor =getContentResolver().query(uri, null, selection, null, null);
+        Cursor cursor = getContentResolver().query(uri, null, selection, null, null);
         if(cursor != null){
             if(cursor.moveToFirst()){
                 path = cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DATA));
@@ -322,6 +270,68 @@ public class BasicInfoActivity extends AppCompatActivity {
         }else{
             Toast.makeText(this, "fail to get image", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    /*
+    first copy the eng.traineddata file into the sdk
+    the rest of the functions are used to address the name, email and telephone number
+     */
+    private void checkFile(File dir) {
+        //directory does not exist, but we can successfully create it
+        if (!dir.exists()&& dir.mkdirs()){
+            copyFiles();
+        }
+        //The directory exists, but there is no data file in it
+        if(dir.exists()) {
+            String datafilepath = Environment.getExternalStorageDirectory().getPath() + "/tessdata/eng.traineddata";
+            File datafile = new File(datafilepath);
+            if (!datafile.exists()) {
+                copyFiles();
+            }
+        }
+    }
+
+    private void copyFiles() {
+        try {
+            //location we want the file to be at
+            String filepath = Environment.getExternalStorageDirectory().getPath()+ "/tessdata/eng.traineddata";
+
+            //get access to AssetManager
+            AssetManager assetManager = getAssets();
+
+            //open byte streams for reading/writing
+            InputStream instream = assetManager.open("tessdata/eng.traineddata");
+            OutputStream outstream = new FileOutputStream(filepath);
+
+            //copy the file to the location specified by filepath
+            byte[] buffer = new byte[1024];
+            int read;
+            while ((read = instream.read(buffer)) != -1) {
+                outstream.write(buffer, 0, read);
+            }
+            outstream.flush();
+            outstream.close();
+            instream.close();
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void processImage(){
+        String OCRresult = null;
+        //init image
+        mTess.setImage(bitmap);
+        OCRresult = mTess.getUTF8Text();
+        //displayText.setText(OCRresult);
+        String name = extractName(OCRresult);
+        String email = extractEmail(OCRresult);
+        String phone = extractPhone(OCRresult);
+        name_view.setText(name);
+        email_view.setText(email);
+        phone_view.setText(phone);
     }
 
     public String extractName(String str){
@@ -362,4 +372,5 @@ public class BasicInfoActivity extends AppCompatActivity {
         }
         return value;
     }
+
 }

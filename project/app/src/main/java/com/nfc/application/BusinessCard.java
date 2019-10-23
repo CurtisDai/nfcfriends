@@ -1,17 +1,23 @@
 package com.nfc.application;
 
 public class BusinessCard {
+    private String uri;
     private String name;
     private String organization;
-    private String job;
     private String address;
     private String telephone;
     private String email;
-    private int position;
     private boolean isFront;
 
     public BusinessCard( ){
 
+    }
+    public void setUri(String uri){
+        this.uri = uri;
+    }
+
+    public String getUri(){
+        return uri;
     }
 
     public void setName(String name){
@@ -28,14 +34,6 @@ public class BusinessCard {
 
     public String getOrganization(){
         return organization;
-    }
-
-    public void setJob(String job){
-        this.job = job;
-    }
-
-    public String getJob(){
-        return job;
     }
 
     public void setAddress(String address){
@@ -62,15 +60,7 @@ public class BusinessCard {
         return email;
     }
 
-    public int getPosition() {
-        return position;
-    }
-
-    public void setPosition(int position) {
-        this.position = position;
-    }
-
-
+    //show the card
     public boolean isFront() {
         return isFront;
     }
