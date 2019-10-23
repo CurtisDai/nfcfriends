@@ -4,13 +4,13 @@
     android:layout_width="match_parent"
     android:layout_height="180dp"
     android:padding="10dp"
-    android:background="@color/theme_grey">
+    android:background="@color/theme_black">
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/icon_image"
         android:layout_width = "70dp"
         android:layout_height="70dp"
-        android:src="@drawable/default_user_logo"
+        android:src="@drawable/ic_action_photo_camera"
         android:layout_centerInParent = "true"/>
 
     <TextView

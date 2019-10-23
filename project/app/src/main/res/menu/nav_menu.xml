@@ -3,23 +3,23 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/profile"
-            android:icon="@drawable/profile"
+            android:icon="@drawable/icon_name"
             android:title="Profile" />
         <item
             android:id="@+id/call"
-            android:icon="@drawable/call"
+            android:icon="@drawable/icon_phone"
             android:title="Call" />
         <item
             android:id="@+id/job"
-            android:icon="@drawable/job"
+            android:icon="@drawable/icon_work"
             android:title="Job"/>
         <item
             android:id="@+id/organization"
-            android:icon="@drawable/group"
+            android:icon="@drawable/icon_company"
             android:title="Organization"/>
         <item
             android:id="@+id/email"
-            android:icon="@drawable/email"
+            android:icon="@drawable/icon_email"
             android:title="Email"/>
     </group>
 </menu>
