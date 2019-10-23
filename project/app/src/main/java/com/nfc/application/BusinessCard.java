@@ -1,5 +1,7 @@
 package com.nfc.application;
 
+import com.google.firebase.storage.StorageReference;
+
 public class BusinessCard {
     private String uri;
     private String name;
@@ -8,6 +10,8 @@ public class BusinessCard {
     private String telephone;
     private String email;
     private boolean isFront;
+    private StorageReference cover_url;
+    private StorageReference profilePic_url;
 
     public BusinessCard( ){
 
@@ -69,4 +73,19 @@ public class BusinessCard {
         isFront = front;
     }
 
+    public StorageReference getCover_url() {
+        return this.cover_url;
+    }
+
+    public void setCover_url(StorageReference cover_url) {
+        this.cover_url  = cover_url;
+    }
+
+    public StorageReference getProfilePic_url() {
+        return this.profilePic_url;
+    }
+
+    public void setProfilePic_url(StorageReference profilePic_url) {
+        this.profilePic_url  = profilePic_url;
+    }
 }
