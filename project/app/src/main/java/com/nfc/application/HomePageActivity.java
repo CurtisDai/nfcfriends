@@ -2,18 +2,30 @@ package com.nfc.application;
 
 import android.Manifest;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Registry;
+import com.bumptech.glide.annotation.GlideModule;
+import com.bumptech.glide.module.AppGlideModule;
+import com.firebase.ui.storage.images.FirebaseImageLoader;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.navigation.NavigationView;
@@ -29,7 +41,10 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 
 import adapter.BusinessCardAdapter;
@@ -39,8 +54,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.LinearSnapHelper;
 import androidx.recyclerview.widget.RecyclerView;
@@ -58,6 +75,10 @@ import android.provider.Settings;
 import android.widget.Toast;
 import java.nio.charset.Charset;
 
+import com.bumptech.glide.Glide;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+
 
 public class HomePageActivity extends AppCompatActivity implements CreateNdefMessageCallback {
 
@@ -68,26 +89,55 @@ public class HomePageActivity extends AppCompatActivity implements CreateNdefMes
     private CardScaleHelper cardScaleHelper;
     private int mLastPos = -1;
     private FirebaseFirestore db;
+    private FirebaseStorage storage;
+    private StorageReference storageRef;
     private BusinessCardAdapter adapter;
     private ArrayList<String> friends;
     private CircleImageView circleImageView;
-    private static final int CHOOSE_PHOTO = 1;
-    private Uri chosenImageUri;
-    private Bitmap bitmap;
-
+    private SharedPreferences preferences;
+    private Uri imageUri;
     //NFC Adapter
     private NfcAdapter mNfcAdapter = null;
+
+    private TextView name;
+    private TextView address;
+    private TextView email;
+    private TextView orga;
+    private TextView tele;
+    private ImageView cover;
+    private CircleImageView portrait;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home_page);
+
+        name = findViewById(R.id.t_name);
+        address = findViewById(R.id.t_location);
+        email = findViewById(R.id.t_email);
+        orga = findViewById(R.id.t_orgnization);
+        tele = findViewById(R.id.t_call);
+        cover = findViewById(R.id.imageView);
+        portrait = findViewById(R.id.icon_image);
+
         db = FirebaseFirestore.getInstance();
+        storage  = FirebaseStorage.getInstance();
+        storageRef = storage.getReference();
+
         initialize();
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        NavigationView navView = (NavigationView) findViewById(R.id.nav_view);
+        preferences = PreferenceManager.getDefaultSharedPreferences(this);
+
+        //initialize recycleview
+        recyclerView = findViewById(R.id.recycler_view);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        layoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
+        recyclerView.setLayoutManager(layoutManager);
+
+        mDrawerLayout =  findViewById(R.id.drawer_layout);
+        NavigationView navView = findViewById(R.id.nav_view);
         navView.setItemIconTintList(null);
         navView.setCheckedItem(R.id.organization);
         navView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
@@ -112,22 +162,27 @@ public class HomePageActivity extends AppCompatActivity implements CreateNdefMes
         circleImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(ContextCompat.checkSelfPermission(HomePageActivity.this,
-                        Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){
-                    ActivityCompat.requestPermissions(HomePageActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                            1);
-                    Toast.makeText(HomePageActivity.this, "you clicked tht button", Toast.LENGTH_LONG).show();
-                }else{
-                    openAlbum();
+                File outputImage = new File(Environment.getExternalStorageDirectory(), "output_image.jpg");
+                try {
+                    if(outputImage.exists()){
+                        outputImage.delete();
+                    }
+                    outputImage.createNewFile();
+                }catch (IOException e){
+                    e.printStackTrace();
                 }
+                if(Build.VERSION.SDK_INT >= 24){
+                    imageUri = FileProvider.getUriForFile(HomePageActivity.this,
+                            "com.example.nfc.application.fileprovider", outputImage);
+                }else{
+                    imageUri = Uri.fromFile(outputImage);
+                }
+                //start camera
+                Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
+                intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
+                startActivityForResult(intent, 1);
             }
         });
-
-        //initialize recycleview
-        recyclerView = findViewById(R.id.recycler_view);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        layoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
-        recyclerView.setLayoutManager(layoutManager);
 
         //NFC Function Call
         checkNFCFunction();
@@ -152,6 +207,14 @@ public class HomePageActivity extends AppCompatActivity implements CreateNdefMes
                 //Todo
                 Toast.makeText(this, "to do", Toast.LENGTH_LONG).show();
                 break;
+            case R.id.log_out:
+                SharedPreferences.Editor editor=preferences.edit();
+                editor.putBoolean("main",false);
+                editor.apply();
+                Intent intent1 = new Intent(HomePageActivity.this,LoginActivity.class);
+                startActivity(intent1);
+                HomePageActivity.this.finish();
+                break;
             default:
                 break;
         }
@@ -167,34 +230,38 @@ public class HomePageActivity extends AppCompatActivity implements CreateNdefMes
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if (task.isSuccessful()) {
                     DocumentSnapshot document = task.getResult();
-                    BusinessCard businessCard = new BusinessCard();
-                    setMyself(document, businessCard);
-                    friends = (ArrayList<String>) document.getData().get("friends");
-                    Log.d("friends", friends.toString());
-                    db.collection("users")
-                            .get()
-                            .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                                @Override
-                                public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                    if (task.isSuccessful()) {
-                                        for (QueryDocumentSnapshot document : task.getResult()) {
-                                            if (friends.contains(document.getId())) {
-                                                BusinessCard businessCard = new BusinessCard();
-                                                setInformation(document, businessCard);
+                    if (document.exists()){
+                        StorageReference cover_url = storageRef.child("cover/" + currentuser + ".jpg");
+                        StorageReference profilePic_url = storageRef.child("portrait/" + currentuser + ".jpg");
+                        setMyself(document, cover_url, profilePic_url);
+                        friends = (ArrayList<String>) document.getData().get("friends");
+                        Log.d("friends", friends.toString());
+                        db.collection("users").get()
+                                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                        if (task.isSuccessful()) {
+                                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                                if (friends.contains(document.getId())) {
+                                                    BusinessCard businessCard = new BusinessCard();
+                                                    setInformation(document, businessCard);
+                                                }
                                             }
+                                            Log.d("size", String.valueOf(businessCardList.size()));
+                                            cardScaleHelper = new CardScaleHelper();
+                                            cardScaleHelper.setCurrentItemPos(2);
+                                            cardScaleHelper.attachToRecyclerView(recyclerView);
+                                            adapter = new BusinessCardAdapter(HomePageActivity.this, businessCardList);
+                                            recyclerView.setAdapter(adapter);
+                                        } else {
+
                                         }
-                                        Log.d("size", String.valueOf(businessCardList.size()));
-                                        cardScaleHelper = new CardScaleHelper();
-                                        cardScaleHelper.setCurrentItemPos(2);
-                                        cardScaleHelper.attachToRecyclerView(recyclerView);
-
-                                        adapter = new BusinessCardAdapter(HomePageActivity.this, businessCardList);
-                                        recyclerView.setAdapter(adapter);
-                                    } else {
-
                                     }
-                                }
-                            });
+                                });
+                    }
+                }
+                else{
+                    Log.d("HomePageActivity", "document doesn't exist");
                 }
             }
         });
@@ -211,14 +278,16 @@ public class HomePageActivity extends AppCompatActivity implements CreateNdefMes
         businessCardList.add(mbusinessCard);
     }
 
-    public void setMyself(DocumentSnapshot document, BusinessCard mbusinessCard){
-        mbusinessCard = new BusinessCard();
+    public void setMyself(DocumentSnapshot document, StorageReference cover, StorageReference profilePic){
+        BusinessCard mbusinessCard = new BusinessCard();
         mbusinessCard.setName(document.getData().get("name").toString());
         mbusinessCard.setEmail(document.getData().get("email").toString());
         mbusinessCard.setTelephone(document.getData().get("telephone").toString());
         mbusinessCard.setAddress(document.getData().get("address").toString());
         mbusinessCard.setOrganization(document.getData().get("organization").toString());
         mbusinessCard.setFront(true);
+        mbusinessCard.setCover_url(cover);
+        mbusinessCard.setProfilePic_url(profilePic);
         businessCardList.add(mbusinessCard);
     }
 
@@ -280,44 +349,12 @@ public class HomePageActivity extends AppCompatActivity implements CreateNdefMes
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        switch(requestCode) {
-            case CHOOSE_PHOTO:
-                if (resultCode == RESULT_OK) {
-                    chosenImageUri = data.getData();
-                    Log.e("chosenImageUri", chosenImageUri.toString());
-                    //use content interface
-                    ContentResolver cr = this.getContentResolver();
-                    try {
-                        bitmap = BitmapFactory.decodeStream(cr.openInputStream(chosenImageUri));
-                        circleImageView.setImageBitmap(bitmap);
-                    } catch (FileNotFoundException e) {
-                        Log.e("Exception", e.getMessage(), e);
-                    }
-                } else {
-                    Log.i("HomePageActivity", "operation error");
-                }
-            default:
-                break;
+        if (resultCode == RESULT_OK) {
+            if (resultCode == RESULT_OK) {
+                Bitmap bitmap = AllFunction.getObject().compressFromCamera();
+                circleImageView.setImageBitmap(bitmap);
+            }
         }
     }
 
-    private void openAlbum(){
-        Intent intent = new Intent("android.intent.action.GET_CONTENT");
-        intent.setType("image/*");
-        startActivityForResult(intent, CHOOSE_PHOTO);
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int RequestCode, String[] permissions, int[] grantResults){
-        switch (RequestCode){
-            case 1:
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
-                    openAlbum();
-                }else{
-                    Toast.makeText(this, "You denied the permission", Toast.LENGTH_SHORT).show();
-                }
-                break;
-            default:
-        }
-    }
 }

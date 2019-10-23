@@ -17,7 +17,7 @@ public class CardAdapterHelper {
 
     public void onCreateViewHolder(ViewGroup parent, View itemView) {
         RecyclerView.LayoutParams lp = (RecyclerView.LayoutParams) itemView.getLayoutParams();
-        lp.width = parent.getWidth() - ScreenUtil.dip2px(itemView.getContext(), 3 * (mPagePadding + mShowLeftCardWidth));
+        lp.width = parent.getWidth() - ScreenUtil.dip2px(itemView.getContext(), 2 * (mPagePadding + mShowLeftCardWidth));
         itemView.setLayoutParams(lp);
     }
 

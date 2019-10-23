@@ -40,9 +40,6 @@ public class BusinessCardAdapter extends RecyclerView.Adapter<BusinessCardAdapte
     private AnimatorSet mRightOutAnimatorSet;
     private AnimatorSet mLeftInAnimatorSet;
 
-    //AnimatorSet  mRightOutSet;
-    //Animator mLeftInSet;
-
     public BusinessCardAdapter(Context context, List<BusinessCard> BusinessCardList){
         mBusinessCardList = BusinessCardList;
         this.mBusinessCardList = BusinessCardList;
@@ -54,7 +51,6 @@ public class BusinessCardAdapter extends RecyclerView.Adapter<BusinessCardAdapte
     static class ViewHolder extends RecyclerView.ViewHolder{
         TextView t_name;
         TextView t_telephone;
-        TextView t_job;
         TextView t_orgnization;
         TextView t_email;
         TextView t_location;
@@ -96,7 +92,7 @@ public class BusinessCardAdapter extends RecyclerView.Adapter<BusinessCardAdapte
         });
 
 
-        ImageView email = (ImageView) holder.card_back.findViewById(R.id.email);
+        ImageView email = holder.card_back.findViewById(R.id.email);
 
         email.setOnClickListener(new View.OnClickListener() {
             @Override
