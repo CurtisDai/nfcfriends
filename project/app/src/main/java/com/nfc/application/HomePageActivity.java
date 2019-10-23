@@ -1,6 +1,7 @@
 package com.nfc.application;
 
 import android.Manifest;
+import android.content.ClipData;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
@@ -25,6 +26,7 @@ import android.widget.Toast;
 import com.bumptech.glide.Registry;
 import com.bumptech.glide.annotation.GlideModule;
 import com.bumptech.glide.module.AppGlideModule;
+import com.bumptech.glide.request.RequestOptions;
 import com.firebase.ui.storage.images.FirebaseImageLoader;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -80,6 +82,7 @@ import com.bumptech.glide.Glide;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import android.content.Context;
 
 public class HomePageActivity extends AppCompatActivity implements CreateNdefMessageCallback {
 
@@ -222,6 +225,31 @@ public class HomePageActivity extends AppCompatActivity implements CreateNdefMes
                         StorageReference cover_url = storageRef.child("cover/" + currentuser + ".jpg");
                         StorageReference profilePic_url = storageRef.child("portrait/" + currentuser + ".jpg");
                         setMyself(document, cover_url, profilePic_url);
+
+                        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+                        Menu menu = navigationView.getMenu();
+                        MenuItem name = menu.findItem(R.id.profile);
+                        name.setTitle(document.getData().get("name").toString());
+                        MenuItem call = menu.findItem(R.id.call);
+                        call.setTitle(document.getData().get("telephone").toString());
+                        MenuItem job = menu.findItem(R.id.job);
+                        job.setTitle(document.getData().get("job").toString());
+                        MenuItem orgnization = menu.findItem(R.id.orgnization);
+                        orgnization.setTitle(document.getData().get("organization").toString());
+                        MenuItem email = menu.findItem(R.id.email);
+                        email.setTitle(document.getData().get("email").toString());
+
+                        TextView mail = findViewById(R.id.mail);
+                        mail.setText(document.getData().get("email").toString());
+                        TextView username = findViewById(R.id.username);
+                        username.setText(document.getData().get("name").toString());
+
+                        CircleImageView icon_image = findViewById(R.id.icon_image);
+                        Glide.with(HomePageActivity.this)
+                                .load(profilePic_url)
+                                .apply(RequestOptions.circleCropTransform())
+                                .into(icon_image);
+
                         friends = (ArrayList<String>) document.getData().get("friends");
                         Log.d("friends", friends.toString());
                         db.collection("users").get()
