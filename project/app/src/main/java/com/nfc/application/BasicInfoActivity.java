@@ -80,9 +80,8 @@ public class BasicInfoActivity extends AppCompatActivity {
     private EditText name_view;
     private EditText email_view;
     private EditText phone_view;
-    private EditText name_info;
-    private EditText organ_info;
-    private EditText loc_info;
+    private EditText organ_view;
+    private EditText loc_view;
     private String currentUser;
 
     private Bitmap bitmap;
@@ -94,15 +93,16 @@ public class BasicInfoActivity extends AppCompatActivity {
         setContentView(R.layout.activity_basic_info);
 
         mStorageRef = FirebaseStorage.getInstance().getReference("cover");
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db = FirebaseFirestore.getInstance();
         mButtonSubmit = findViewById(R.id.button_submit);
+        mProgressBar = findViewById(R.id.progress_bar);
 
         picture = findViewById(R.id.picture);
         name_view = findViewById(R.id.name_info);
         email_view = findViewById(R.id.email_info);
         phone_view = findViewById(R.id.phone_info);
-        name_info = findViewById(R.id.name_info);
-        organ_info = findViewById(R.id.organ_info);
+        loc_view = findViewById(R.id.loc_info);
+        organ_view = findViewById(R.id.organ_info);
         currentUser = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
         String language = "eng";
@@ -170,14 +170,14 @@ public class BasicInfoActivity extends AppCompatActivity {
     }
 
     private void uploadInfo() {
-        Map<String, Object> data = new HashMap<>();
-        data.put("name", name_info);
-        data.put("address", loc_info);
-        data.put("email", email_view);
-        data.put("organization", organ_info);
-        data.put("telephone", phone_view);
+        Map<String, String> data = new HashMap<>();
+        data.put("name", name_view.getText().toString());
+        data.put("address", loc_view.getText().toString());
+        data.put("email", email_view.getText().toString());
+        data.put("organization", organ_view.getText().toString());
+        data.put("telephone", phone_view.getText().toString());
 
-        db.collection("cities").document("BJ")
+        db.collection("users").document(currentUser)
                 .set(data, SetOptions.merge());
     }
 

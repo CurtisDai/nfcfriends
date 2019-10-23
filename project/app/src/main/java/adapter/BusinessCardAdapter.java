@@ -16,6 +16,9 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.nfc.application.BusinessCard;
 import com.nfc.application.FlipAnimator;
 import com.nfc.application.R;
@@ -28,6 +31,7 @@ import android.net.Uri;
 import androidx.annotation.Nullable;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
+import de.hdodenhof.circleimageview.CircleImageView;
 import library.CardAdapterHelper;
 
 public class BusinessCardAdapter extends RecyclerView.Adapter<BusinessCardAdapter.ViewHolder>{
@@ -57,6 +61,8 @@ public class BusinessCardAdapter extends RecyclerView.Adapter<BusinessCardAdapte
         View businessCardView;
         LinearLayout card_front;
         RelativeLayout card_back;
+        CircleImageView t_image;
+        ImageView f_image;
 
         public ViewHolder(View cardView){
             super(cardView);
@@ -68,6 +74,8 @@ public class BusinessCardAdapter extends RecyclerView.Adapter<BusinessCardAdapte
             t_orgnization = card_back.findViewById(R.id.t_orgnization);
             t_email = card_back.findViewById(R.id.t_email);
             t_location = card_back.findViewById(R.id.t_location);
+            t_image = card_back.findViewById(R.id.icon_image);
+            f_image = card_front.findViewById(R.id.imageView);
         }
 
     }
@@ -145,12 +153,23 @@ public class BusinessCardAdapter extends RecyclerView.Adapter<BusinessCardAdapte
         mCardAdapterHelper.onBindViewHolder(holder.itemView, position, getItemCount());
         card_back_arr[position] = holder.card_back;
         card_front_arr[position] = holder.card_front;
+        Log.d("position", String.valueOf(position));
         BusinessCard card = mBusinessCardList.get(position);
+        Glide.with(context)
+                .load(card.getCover_url())
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                .skipMemoryCache(true)
+                .into(holder.f_image);
         holder.t_name.setText(card.getName());
         holder.t_location.setText(card.getAddress());
         holder.t_email.setText(card.getEmail());
         holder.t_orgnization.setText(card.getOrganization());
         holder.t_telephone.setText(card.getTelephone());
+        Glide.with(context)
+                .load(card.getProfilePic_url())
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                .skipMemoryCache(true)
+                .into(holder.t_image);
     }
 
     @Override

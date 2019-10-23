@@ -37,6 +37,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -96,29 +97,15 @@ public class HomePageActivity extends AppCompatActivity implements CreateNdefMes
     private CircleImageView circleImageView;
     private SharedPreferences preferences;
     private Uri imageUri;
+    private String friendUri;
+    private String currentuser;
     //NFC Adapter
     private NfcAdapter mNfcAdapter = null;
-
-    private TextView name;
-    private TextView address;
-    private TextView email;
-    private TextView orga;
-    private TextView tele;
-    private ImageView cover;
-    private CircleImageView portrait;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home_page);
-
-        name = findViewById(R.id.t_name);
-        address = findViewById(R.id.t_location);
-        email = findViewById(R.id.t_email);
-        orga = findViewById(R.id.t_orgnization);
-        tele = findViewById(R.id.t_call);
-        cover = findViewById(R.id.imageView);
-        portrait = findViewById(R.id.icon_image);
 
         db = FirebaseFirestore.getInstance();
         storage  = FirebaseStorage.getInstance();
@@ -205,6 +192,7 @@ public class HomePageActivity extends AppCompatActivity implements CreateNdefMes
                 break;
             case R.id.Delete:
                 //Todo
+                removeFriends(currentuser, friendUri);
                 Toast.makeText(this, "to do", Toast.LENGTH_LONG).show();
                 break;
             case R.id.log_out:
@@ -222,7 +210,7 @@ public class HomePageActivity extends AppCompatActivity implements CreateNdefMes
     }
 
     public void initialize(){
-        final String currentuser = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        currentuser = FirebaseAuth.getInstance().getCurrentUser().getUid();
         final DocumentReference documentReference = db.collection("users").document(currentuser);
         Log.d("current user", currentuser);
         documentReference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -241,10 +229,14 @@ public class HomePageActivity extends AppCompatActivity implements CreateNdefMes
                                     @Override
                                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                                         if (task.isSuccessful()) {
+                                            int i = 0;
                                             for (QueryDocumentSnapshot document : task.getResult()) {
                                                 if (friends.contains(document.getId())) {
+                                                    StorageReference cover_url = storageRef.child("cover/" + friends.get(i) + ".jpg");
+                                                    StorageReference profilePic_url = storageRef.child("portrait/" + friends.get(i) + ".jpg");
                                                     BusinessCard businessCard = new BusinessCard();
-                                                    setInformation(document, businessCard);
+                                                    i = i + 1;
+                                                    setInformation(document, businessCard, cover_url, profilePic_url);
                                                 }
                                             }
                                             Log.d("size", String.valueOf(businessCardList.size()));
@@ -267,14 +259,15 @@ public class HomePageActivity extends AppCompatActivity implements CreateNdefMes
         });
     }
 
-    public void setInformation(QueryDocumentSnapshot document, BusinessCard mbusinessCard){
-        mbusinessCard = new BusinessCard();
+    public void setInformation(QueryDocumentSnapshot document, BusinessCard mbusinessCard, StorageReference cover, StorageReference profilePic){
         mbusinessCard.setName(document.get("name").toString());
         mbusinessCard.setEmail(document.get("email").toString());
         mbusinessCard.setTelephone(document.get("telephone").toString());
         mbusinessCard.setAddress(document.get("address").toString());
         mbusinessCard.setOrganization(document.get("organization").toString());
         mbusinessCard.setFront(true);
+        mbusinessCard.setCover_url(cover);
+        mbusinessCard.setProfilePic_url(profilePic);
         businessCardList.add(mbusinessCard);
     }
 
@@ -320,7 +313,7 @@ public class HomePageActivity extends AppCompatActivity implements CreateNdefMes
 
     @Override
     public NdefMessage createNdefMessage(NfcEvent nfcEvent){
-        String message = "nfc test test";
+        String message = currentuser;
         NdefRecord ndefRecord = NdefRecord.createMime("text/plain",message.getBytes());
         NdefMessage ndefMessage = new NdefMessage(ndefRecord);
         return ndefMessage;
@@ -333,6 +326,7 @@ public class HomePageActivity extends AppCompatActivity implements CreateNdefMes
             Parcelable[] rawMessage = intent.getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES);
             NdefMessage message = (NdefMessage) rawMessage[0];
             String text = new String(message.getRecords()[0].getPayload());
+            friendUri = text;
             Log.d("suc",text);
         }else{
             Log.d("unsuc","Where is my fucking text???");
@@ -354,6 +348,26 @@ public class HomePageActivity extends AppCompatActivity implements CreateNdefMes
                 Bitmap bitmap = AllFunction.getObject().compressFromCamera();
                 circleImageView.setImageBitmap(bitmap);
             }
+        }
+    }
+
+    private void setFriends(String currentuser, String friendUri){
+        if(friendUri == null){
+            Log.d("message", "empty");
+        }
+        else{
+            db.collection("users").document(currentuser).update("friends", FieldValue.arrayUnion(friendUri));
+            db.collection("users").document(friendUri).update("friends", FieldValue.arrayUnion(currentuser));
+        }
+    }
+
+    private void removeFriends(String currentuser, String friendUri){
+        if(friendUri == null){
+            Log.d("message", "empty");
+        }
+        else {
+            db.collection("users").document(currentuser).update("friends", FieldValue.arrayRemove(friendUri));
+            db.collection("users").document(friendUri).update("friends", FieldValue.arrayRemove(currentuser));
         }
     }
 
