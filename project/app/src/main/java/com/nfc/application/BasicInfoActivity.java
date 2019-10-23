@@ -49,6 +49,7 @@ import androidx.core.content.FileProvider;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.common.math.Quantiles;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
@@ -74,6 +75,7 @@ public class BasicInfoActivity extends AppCompatActivity {
     private Button OCRButton;
     private EditText name_view;
     private EditText email_view;
+    private String currentUser;
 
     private EditText phone_view;
     private Bitmap bitmap;
@@ -84,7 +86,7 @@ public class BasicInfoActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_basic_info);
 
-        mStorageRef = FirebaseStorage.getInstance().getReference("uploads");
+        mStorageRef = FirebaseStorage.getInstance().getReference("cover");
         mButtonSubmit = findViewById(R.id.button_submit);
 
 
@@ -92,6 +94,7 @@ public class BasicInfoActivity extends AppCompatActivity {
         name_view = findViewById(R.id.name_info);
         email_view = findViewById(R.id.email_info);
         phone_view = findViewById(R.id.phone_info);
+        currentUser = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
         String language = "eng";
         datapath = getFilesDir() +"/assets/";
@@ -164,7 +167,7 @@ public class BasicInfoActivity extends AppCompatActivity {
 
     private void uploadFile() {
         if (chosenImageUri != null) {
-            StorageReference fileReference = mStorageRef.child(System.currentTimeMillis()
+            StorageReference fileReference = mStorageRef.child(currentUser
                     + "." + getFileExtension(chosenImageUri));
 
             mUploadTask = fileReference.putFile(chosenImageUri)
