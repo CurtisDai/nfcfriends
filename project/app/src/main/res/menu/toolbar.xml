@@ -5,7 +5,7 @@
     <item
         android:id="@+id/log_out"
         android:title="LogOut"
-        android:icon = "@drawable/camera"
+        android:icon = "@drawable/icon_logout"
         app:showAsAction = "ifRoom"/>
 
     <item
@@ -26,6 +26,5 @@
         android:title="@string/Logout"
         android:icon = "@drawable/icon_logout"
         app:showAsAction = "ifRoom"/>
-
 
 </menu>
